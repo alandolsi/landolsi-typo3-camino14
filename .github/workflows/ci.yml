@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+# Verhindert parallele Läufe auf derselben Ref
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────
+  # Job 1: composer.json / composer.lock validieren
+  # ─────────────────────────────────────────────
+  validate:
+    name: Validate Composer
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP 8.5 einrichten
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.5"
+          tools: composer:v2
+          coverage: none
+
+      - name: composer validate
+        run: composer validate --strict --no-interaction
+
+  # ─────────────────────────────────────────────
+  # Job 2: Projekt bauen und grundlegend prüfen
+  # ─────────────────────────────────────────────
+  build:
+    name: Build & Smoke Test
+    runs-on: ubuntu-latest
+    needs: validate
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP 8.5 einrichten
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.5"
+          tools: composer:v2
+          coverage: none
+
+      - name: Composer-Cache konfigurieren
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Composer-Cache wiederherstellen
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Composer install
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: TYPO3-Version ausgeben
+        run: vendor/bin/typo3 -V
+
+      - name: Prüfen ob Autoload korrekt generiert wurde
+        run: |
+          test -f vendor/autoload.php || (echo "autoload.php fehlt!" && exit 1)
+          echo "✓ vendor/autoload.php vorhanden"

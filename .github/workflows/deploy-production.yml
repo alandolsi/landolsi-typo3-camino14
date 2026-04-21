@@ -1,0 +1,107 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+# Nur ein Production-Deployment gleichzeitig erlaubt
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to CloudPanel
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP 8.5 einrichten
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.5"
+          tools: composer:v2
+          coverage: none
+
+      - name: Composer install (production)
+        run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-progress
+
+      # SSH-Schlüssel einrichten
+      - name: SSH-Agent und Key einrichten
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PROD_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/deploy_key
+
+      - name: Bekannte Hosts befüllen (ssh-keyscan)
+        run: |
+          HOST="${{ secrets.PROD_HOST }}"
+          PORT="${{ secrets.PROD_PORT || '22' }}"
+          ssh-keyscan -p "${PORT}" -H "${HOST}" >> ~/.ssh/known_hosts 2>/dev/null
+          echo "✓ known_hosts befüllt für ${HOST}:${PORT}"
+
+      # Code per rsync übertragen — sensible Verzeichnisse ausgeschlossen
+      - name: Code via rsync deployen
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_PORT: ${{ secrets.PROD_PORT || '22' }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+          PROD_DEPLOY_PATH: ${{ secrets.PROD_DEPLOY_PATH }}
+        run: |
+          rsync -azv --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p ${PROD_PORT} -o StrictHostKeyChecking=no" \
+            --exclude=".git/" \
+            --exclude=".github/" \
+            --exclude=".ddev/" \
+            --exclude="var/" \
+            --exclude="node_modules/" \
+            --exclude="config/system/settings.php" \
+            --exclude="config/system/additional.php" \
+            ./ \
+            "${PROD_USER}@${PROD_HOST}:${PROD_DEPLOY_PATH}/"
+          echo "✓ rsync abgeschlossen"
+
+      # Remote: composer install + TYPO3 Cache flush
+      - name: Remote Post-Deploy-Commands ausführen
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_PORT: ${{ secrets.PROD_PORT || '22' }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+          PROD_DEPLOY_PATH: ${{ secrets.PROD_DEPLOY_PATH }}
+          PROD_PHP_BIN: ${{ secrets.PROD_PHP_BIN || 'php' }}
+          PROD_COMPOSER_BIN: ${{ secrets.PROD_COMPOSER_BIN || 'composer' }}
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+              -p "${PROD_PORT}" \
+              -o StrictHostKeyChecking=no \
+              "${PROD_USER}@${PROD_HOST}" \
+              bash -s <<EOF
+            set -e
+            cd "${PROD_DEPLOY_PATH}"
+
+            echo "→ composer install..."
+            ${PROD_PHP_BIN} ${PROD_COMPOSER_BIN} install \
+              --no-dev --prefer-dist --no-interaction --optimize-autoloader
+
+            echo "→ TYPO3 Cache flushen..."
+            ${PROD_PHP_BIN} vendor/bin/typo3 cache:flush || true
+
+            echo "→ TYPO3-Version auf Server:"
+            ${PROD_PHP_BIN} vendor/bin/typo3 -V || true
+
+            echo "✓ Deployment auf ${PROD_DEPLOY_PATH} abgeschlossen."
+          EOF
+
+      - name: Deployment-Info ausgeben
+        run: |
+          echo "✓ Production-Deployment erfolgreich"
+          echo "  Branch: ${{ github.ref_name }}"
+          echo "  Commit: ${{ github.sha }}"
+          echo "  Zeitstempel: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
