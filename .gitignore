@@ -1,0 +1,30 @@
+# OS / IDE
+.DS_Store
+.idea
+nbproject
+*.swp
+
+# TYPO3 runtime
+/var/*
+!/var/labels
+
+# Composer vendor
+/vendor
+
+# Public generated/uploaded assets (nicht committen)
+/public/*
+!/public/.htaccess
+
+# TYPO3 Systemkonfiguration (produktionssensitiv!)
+/config/system/settings.php
+/config/system/additional.php
+
+# Umgebungsvariablen
+.env
+.env.local
+
+# DDEV Production-Zugangsdaten (NIEMALS committen!)
+.ddev/.env.pullpush
+
+# Node
+node_modules/
