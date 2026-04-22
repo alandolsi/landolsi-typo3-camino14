@@ -126,14 +126,6 @@
     }
 
     function ensureHomepageCarousel() {
-        const hostname = window.location.hostname.toLowerCase();
-        const isLocalHost = hostname === 'localhost'
-            || hostname === '127.0.0.1'
-            || hostname.endsWith('.ddev.site');
-        if (!isLocalHost) {
-            return;
-        }
-
         const path = window.location.pathname.replace(/\/+$/, '') || '/';
         if (path !== '/' && path !== '/en') {
             return;
