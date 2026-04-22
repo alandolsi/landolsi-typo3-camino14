@@ -155,7 +155,7 @@ curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin
 
 ---
 
-## ddev pull-production
+## ddev pull production
 
 Zieht DB + fileadmin von Production nach lokal:
 
@@ -165,7 +165,7 @@ cp .ddev/.env.pullpush.example .ddev/.env.pullpush
 # .ddev/.env.pullpush editieren
 
 # Ausführen
-ddev pull-production
+ddev pull production
 ```
 
 Voraussetzungen:
@@ -175,14 +175,14 @@ Voraussetzungen:
 
 ---
 
-## ddev push-production
+## ddev push production
 
 > **⚠️ ACHTUNG: Überschreibt die Produktionsdatenbank!**
 
 ```bash
-ddev push-production --i-understand
+ddev push production
 # oder:
-ALLOW_PROD_PUSH=1 ddev push-production
+ddev push production
 ```
 
 Dieser Command sollte **nur** in kontrollierten Situationen verwendet werden, z.B.:

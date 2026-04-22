@@ -1,0 +1,131 @@
+# DDEV Provider: production
+#
+# Verwendung:
+#   ddev pull production    — DB + fileadmin von Production lokal holen
+#   ddev push production    — Lokal nach Production übertragen (⚠️ DDEV fragt nach Bestätigung)
+#
+# Voraussetzung:
+#   cp .ddev/.env.pullpush.example .ddev/.env.pullpush
+#   Datei mit echten Zugangsdaten befüllen (wird NIEMALS committed)
+
+# ── Verbindung prüfen (wird vor pull/push ausgeführt) ────────────────────────
+auth_command:
+  service: host
+  command: |
+    set -eu
+    ENV_FILE="${DDEV_APPROOT}/.ddev/.env.pullpush"
+    if [ ! -f "${ENV_FILE}" ]; then
+      echo "❌ ${ENV_FILE} nicht gefunden."
+      echo "   Bitte anlegen: cp .ddev/.env.pullpush.example .ddev/.env.pullpush"
+      exit 1
+    fi
+    # shellcheck source=/dev/null
+    . "${ENV_FILE}"
+
+    MISSING=""
+    for VAR in PROD_HOST PROD_USER PROD_DB_NAME PROD_DB_USER PROD_DB_PASSWORD PROD_FILES_PATH; do
+      eval "VAL=\${${VAR}:-}"
+      if [ -z "${VAL}" ]; then MISSING="${MISSING} ${VAR}"; fi
+    done
+    if [ -n "${MISSING}" ]; then
+      echo "❌ Fehlende Variablen in .env.pullpush:${MISSING}"; exit 1
+    fi
+
+    ssh -p "${PROD_PORT:-22}" \
+        -o BatchMode=yes \
+        -o ConnectTimeout=10 \
+        -o StrictHostKeyChecking=no \
+        "${PROD_USER}@${PROD_HOST}" \
+        "echo '✓ SSH-Verbindung zu ${PROD_HOST} OK'" || exit 1
+
+# ── DB von Production ziehen ─────────────────────────────────────────────────
+db_pull_command:
+  service: host
+  command: |
+    set -eu
+    . "${DDEV_APPROOT}/.ddev/.env.pullpush"
+
+    echo "▶ Erstelle DB-Dump auf Production (${PROD_HOST})..."
+    ssh -p "${PROD_PORT:-22}" \
+        -o BatchMode=yes \
+        -o StrictHostKeyChecking=no \
+        "${PROD_USER}@${PROD_HOST}" \
+        "mysqldump \
+          --host='${PROD_DB_HOST:-127.0.0.1}' \
+          --user='${PROD_DB_USER}' \
+          --password='${PROD_DB_PASSWORD}' \
+          --single-transaction \
+          '${PROD_DB_NAME}'" \
+      > /tmp/ddev_prod_pull.sql
+
+    echo "▶ Importiere DB lokal..."
+    ddev import-db --file=/tmp/ddev_prod_pull.sql
+    rm -f /tmp/ddev_prod_pull.sql
+    echo "✓ DB-Pull abgeschlossen"
+
+# ── fileadmin von Production ziehen ──────────────────────────────────────────
+files_pull_command:
+  service: host
+  command: |
+    set -eu
+    . "${DDEV_APPROOT}/.ddev/.env.pullpush"
+
+    LOCAL_FILES="${DDEV_APPROOT}/${LOCAL_FILES_PATH:-public/fileadmin/}"
+    mkdir -p "${LOCAL_FILES}"
+
+    echo "▶ Synchronisiere fileadmin: Production → lokal..."
+    rsync -az \
+      -e "ssh -p ${PROD_PORT:-22} -o BatchMode=yes -o StrictHostKeyChecking=no" \
+      "${PROD_USER}@${PROD_HOST}:${PROD_FILES_PATH}" \
+      "${LOCAL_FILES}"
+    echo "✓ Files-Pull abgeschlossen"
+
+# ── DB nach Production übertragen ─────────────────────────────────────────────
+db_push_command:
+  service: host
+  command: |
+    set -eu
+    . "${DDEV_APPROOT}/.ddev/.env.pullpush"
+
+    TS=$(date +%Y%m%d_%H%M%S)
+    TMP_FILE="/tmp/ddev_prod_push_${TS}.sql.gz"
+
+    echo "▶ Exportiere lokale DB..."
+    ddev export-db --file="${TMP_FILE}" --gzip
+
+    echo "▶ Übertrage Dump auf Production..."
+    rsync -az \
+      -e "ssh -p ${PROD_PORT:-22} -o BatchMode=yes -o StrictHostKeyChecking=no" \
+      "${TMP_FILE}" \
+      "${PROD_USER}@${PROD_HOST}:/tmp/ddev_prod_push_${TS}.sql.gz"
+
+    echo "▶ Importiere DB auf Production..."
+    ssh -p "${PROD_PORT:-22}" \
+        -o BatchMode=yes \
+        -o StrictHostKeyChecking=no \
+        "${PROD_USER}@${PROD_HOST}" \
+        "gunzip -c /tmp/ddev_prod_push_${TS}.sql.gz | \
+         mysql --host='${PROD_DB_HOST:-127.0.0.1}' \
+               --user='${PROD_DB_USER}' \
+               --password='${PROD_DB_PASSWORD}' \
+               '${PROD_DB_NAME}' && \
+         rm -f /tmp/ddev_prod_push_${TS}.sql.gz"
+
+    rm -f "${TMP_FILE}"
+    echo "✓ DB-Push abgeschlossen"
+
+# ── fileadmin nach Production übertragen ──────────────────────────────────────
+files_push_command:
+  service: host
+  command: |
+    set -eu
+    . "${DDEV_APPROOT}/.ddev/.env.pullpush"
+
+    LOCAL_FILES="${DDEV_APPROOT}/${LOCAL_FILES_PATH:-public/fileadmin/}"
+
+    echo "▶ Synchronisiere fileadmin: lokal → Production (ohne --delete)..."
+    rsync -az \
+      -e "ssh -p ${PROD_PORT:-22} -o BatchMode=yes -o StrictHostKeyChecking=no" \
+      "${LOCAL_FILES}" \
+      "${PROD_USER}@${PROD_HOST}:${PROD_FILES_PATH}"
+    echo "✓ Files-Push abgeschlossen"
