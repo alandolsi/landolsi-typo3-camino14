@@ -1,0 +1,4 @@
+# Color Switcher – client-side Camino theme selection (localStorage-based)
+page.includeCSS.colorSwitcher = EXT:site_package/Resources/Public/color-switcher/color-switcher.css
+
+page.includeJSFooter.colorSwitcher = EXT:site_package/Resources/Public/color-switcher/color-switcher.js

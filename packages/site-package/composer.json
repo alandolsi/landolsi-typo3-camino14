@@ -1,0 +1,19 @@
+{
+    "name": "landolsi/site-package",
+    "description": "Landolsi TYPO3 Site Package with Color Switcher",
+    "type": "typo3-cms-extension",
+    "require": {
+        "typo3/cms-core": "^14.0",
+        "typo3/theme-camino": "*"
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "site_package"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Landolsi\\SitePackage\\": "Classes/"
+        }
+    }
+}

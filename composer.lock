@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "165f912ac902d06b21bf7ff6902c6afb",
+    "content-hash": "489cb2e278394713540f13645bdf573e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1049,6 +1049,34 @@
                 }
             ],
             "time": "2026-03-10T16:41:02+00:00"
+        },
+        {
+            "name": "landolsi/site-package",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "./packages/site-package",
+                "reference": "1804987284072a372da9dbb30a0c19eeb083a9ad"
+            },
+            "require": {
+                "typo3/cms-core": "^14.0",
+                "typo3/theme-camino": "*"
+            },
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "extension-key": "site_package"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Landolsi\\SitePackage\\": "Classes/"
+                }
+            },
+            "description": "Landolsi TYPO3 Site Package with Color Switcher",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "lolli42/finediff",
@@ -7385,7 +7413,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "landolsi/site-package": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {},

@@ -1,0 +1,104 @@
+/* ============================================================
+   Camino Color Switcher Widget
+   Positioned fixed bottom-right, purely client-side
+   ============================================================ */
+
+.color-switcher {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    font-family: "Open Sans", sans-serif;
+}
+
+/* Toggle button (palette icon) */
+.color-switcher__toggle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: var(--color-primary-100, #B45023);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    transition: transform .2s ease, background .3s ease;
+}
+
+.color-switcher__toggle:hover {
+    transform: scale(1.08);
+}
+
+.color-switcher__toggle svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+}
+
+/* Panel */
+.color-switcher__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 16px;
+    padding: 12px 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.15);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px) scale(.97);
+    transition: opacity .2s ease, transform .2s ease;
+}
+
+.color-switcher[data-open="true"] .color-switcher__panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+/* Individual theme button */
+.color-switcher__option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 10px;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    transition: background .15s ease;
+}
+
+.color-switcher__option:hover {
+    background: rgba(0,0,0,.06);
+}
+
+.color-switcher__option[aria-pressed="true"] {
+    background: rgba(0,0,0,.08);
+    font-weight: 700;
+}
+
+/* Color swatch */
+.color-switcher__swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(0,0,0,.15);
+    flex-shrink: 0;
+}
+
+.color-switcher__swatch--caramel  { background: #B45023; }
+.color-switcher__swatch--ocean    { background: #0068CE; }
+.color-switcher__swatch--forest   { background: #266D55; }
+.color-switcher__swatch--violet   { background: #6E1AFF; }

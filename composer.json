@@ -14,6 +14,7 @@
         "sort-packages": true
     },
     "require": {
+        "landolsi/site-package": "@dev",
         "typo3/cms-backend": "^14.0",
         "typo3/cms-belog": "^14.0",
         "typo3/cms-beuser": "^14.0",

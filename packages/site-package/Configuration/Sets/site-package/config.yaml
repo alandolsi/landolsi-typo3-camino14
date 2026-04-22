@@ -1,0 +1,4 @@
+name: landolsi/site-package
+label: 'Landolsi Site Package'
+dependencies:
+  - typo3/theme-camino
