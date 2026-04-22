@@ -1,7 +1,6 @@
 base: 'https://camino14.ddev.site/'
 dependencies:
-  - typo3/fluid-styled-content
-  - typo3/fluid-styled-content-css
+  - typo3/theme-camino
 errorHandling: {  }
 languages:
   -
