@@ -56,7 +56,7 @@ ddev launch /typo3/
 | Frontend | https://camino14.ddev.site/ |
 | Backend | https://camino14.ddev.site/typo3/ |
 | Mailpit | https://camino14.ddev.site:8026/ |
-| Zusatzdomain (lokal, nach `sudo ddev restart`) | https://camino14.landolsi.de/ |
+| Produktionsdomain | https://camino14.landolsi.de/ | zeigt auf Production-Server (DNS) |
 
 ---
 
