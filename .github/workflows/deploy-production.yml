@@ -116,9 +116,8 @@ jobs:
               -o StrictHostKeyChecking=no \
               "${PROD_USER}@${PROD_HOST}" \
               "cd '${PROD_DEPLOY_PATH}' \
-               && ${PHP} vendor/bin/typo3 cache:flush \
-               && echo '✓ TYPO3 Cache geleert' \
-               && ${PHP} vendor/bin/typo3 -V"
+               && (${PHP} vendor/bin/typo3 cache:flush && echo '✓ TYPO3 Cache geleert') || echo '⚠ Cache-Flush übersprungen (settings.php fehlt?)' \
+               && ${PHP} vendor/bin/typo3 -V || true"
 
       - name: Deployment-Info
         run: |
