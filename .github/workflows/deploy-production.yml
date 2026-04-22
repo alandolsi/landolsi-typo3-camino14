@@ -63,6 +63,20 @@ jobs:
           ssh-keyscan -p "${PORT}" -H "${PROD_HOST}" >> ~/.ssh/known_hosts 2>/dev/null
           echo "✓ known_hosts befüllt für ${PROD_HOST}:${PORT}"
 
+      # SSH-Verbindung vorab testen (verbose für Debugging)
+      - name: SSH-Verbindung testen
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_PORT: ${{ secrets.PROD_PORT }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+        run: |
+          PORT="${PROD_PORT:-22}"
+          ssh -i ~/.ssh/deploy_key \
+              -p "${PORT}" \
+              -o StrictHostKeyChecking=no \
+              -v \
+              "${PROD_USER}@${PROD_HOST}" "echo '✓ SSH OK'" 2>&1 | grep -E "debug1|Authentications|Permission|publickey|offer|accept|success|ident"
+
       # Code + vendor/ per rsync übertragen, sensible/lokale Dateien ausgeschlossen
       - name: Code via rsync deployen
         env:
