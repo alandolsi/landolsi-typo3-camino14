@@ -1,15 +1,33 @@
 base: 'https://camino14.ddev.site/'
 dependencies:
   - typo3/theme-camino
+  - landolsi/site-package
 errorHandling: {  }
 languages:
   -
-    title: English
+    title: Deutsch
     enabled: true
     languageId: 0
     base: /
+    locale: de_DE.UTF-8
+    iso-639-1: de
+    navigationTitle: Deutsch
+    hreflang: de-DE
+    direction: ''
+    flag: de
+  -
+    title: English
+    enabled: true
+    languageId: 1
+    base: /en/
     locale: en_US.UTF-8
+    iso-639-1: en
     navigationTitle: English
+    hreflang: en-US
+    direction: ''
     flag: us
+    fallbackType: fallback
+    fallbacks:
+      - 0
 rootPageId: 1
 routes: {  }
