@@ -45,6 +45,10 @@ db_pull_command:
     set -eu
     . "${DDEV_APPROOT}/.ddev/.env.pullpush"
 
+    DOWNLOADS="${DDEV_APPROOT}/.ddev/.downloads"
+    mkdir -p "${DOWNLOADS}"
+    rm -f "${DOWNLOADS}/db.sql.gz"
+
     echo "▶ Erstelle DB-Dump auf Production (${PROD_HOST})..."
     ssh -p "${PROD_PORT:-22}" \
         -o BatchMode=yes \
@@ -56,12 +60,8 @@ db_pull_command:
           --password='${PROD_DB_PASSWORD}' \
           --single-transaction \
           '${PROD_DB_NAME}'" \
-      > /tmp/ddev_prod_pull.sql
-
-    echo "▶ Importiere DB lokal..."
-    ddev import-db --file=/tmp/ddev_prod_pull.sql
-    rm -f /tmp/ddev_prod_pull.sql
-    echo "✓ DB-Pull abgeschlossen"
+      | gzip > "${DOWNLOADS}/db.sql.gz"
+    echo "✓ DB-Dump gespeichert: ${DOWNLOADS}/db.sql.gz"
 
 # ── fileadmin von Production ziehen ──────────────────────────────────────────
 files_pull_command:
@@ -70,15 +70,20 @@ files_pull_command:
     set -eu
     . "${DDEV_APPROOT}/.ddev/.env.pullpush"
 
-    LOCAL_FILES="${DDEV_APPROOT}/${LOCAL_FILES_PATH:-public/fileadmin/}"
-    mkdir -p "${LOCAL_FILES}"
+    DOWNLOADS="${DDEV_APPROOT}/.ddev/.downloads"
+    mkdir -p "${DOWNLOADS}"
+    rm -f "${DOWNLOADS}/fileadmin.tar.gz"
 
-    echo "▶ Synchronisiere fileadmin: Production → lokal..."
-    rsync -az \
-      -e "ssh -p ${PROD_PORT:-22} -o BatchMode=yes -o StrictHostKeyChecking=no" \
-      "${PROD_USER}@${PROD_HOST}:${PROD_FILES_PATH}" \
-      "${LOCAL_FILES}"
-    echo "✓ Files-Pull abgeschlossen"
+    echo "▶ Lade fileadmin von Production als Archiv..."
+    REMOTE_PARENT=$(dirname "${PROD_FILES_PATH}")
+    REMOTE_DIR=$(basename "${PROD_FILES_PATH}")
+    ssh -p "${PROD_PORT:-22}" \
+        -o BatchMode=yes \
+        -o StrictHostKeyChecking=no \
+        "${PROD_USER}@${PROD_HOST}" \
+        "tar -czf - -C '${REMOTE_PARENT}' '${REMOTE_DIR}'" \
+      > "${DOWNLOADS}/fileadmin.tar.gz"
+    echo "✓ Archiv bereit: ${DOWNLOADS}/fileadmin.tar.gz"
 
 # ── DB nach Production übertragen ─────────────────────────────────────────────
 db_push_command:
