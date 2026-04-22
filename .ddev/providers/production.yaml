@@ -45,6 +45,12 @@ db_pull_command:
     set -eu
     . "${DDEV_APPROOT}/.ddev/.env.pullpush"
 
+    # ⚠️ Sicherheits-Snapshot: lokale DB VOR dem Pull sichern
+    SNAP_NAME="pre-pull-$(date +%Y%m%d-%H%M%S)"
+    echo "▶ Erstelle lokalen DB-Snapshot (${SNAP_NAME}) vor dem Pull..."
+    ddev snapshot --name "${SNAP_NAME}" 2>&1 | grep -E 'snapshot|error|✓|❌' || true
+    echo "✓ Snapshot erstellt — Wiederherstellung: ddev snapshot restore ${SNAP_NAME}"
+
     DOWNLOADS="${DDEV_APPROOT}/.ddev/.downloads"
     mkdir -p "${DOWNLOADS}"
     rm -f "${DOWNLOADS}/db.sql.gz"
