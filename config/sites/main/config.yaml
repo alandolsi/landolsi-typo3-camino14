@@ -1,4 +1,4 @@
-base: 'https://camino14.ddev.site/'
+base: '/'
 dependencies:
   - typo3/theme-camino
   - landolsi/site-package
