@@ -3,88 +3,111 @@
 Dieses Dokument beschreibt das einmalige Server-Setup, die benötigten GitHub-Secrets
 und den vollständigen Deployment-Prozess für `landolsi-typo3-camino14` auf CloudPanel.
 
+**Server:** `host7.rosenheim-web-services.de`  
+**User:** `landolsi-camino14`  
+**Deploy-Pfad:** `/home/landolsi-camino14/htdocs/camino14.landolsi.de`
+
 ---
 
-## Benötigte GitHub Secrets
+## Deployment-Strategie
 
-Alle Secrets müssen im GitHub Repository unter  
-**Settings → Secrets and variables → Actions** eingetragen werden.
+Code wird auf CI (GitHub Actions) gebaut und per `rsync` auf den Server übertragen.
+Der Server muss **kein Composer** installiert haben — `vendor/` kommt bereits fertig gebaut an.
 
-| Secret | Beschreibung | Beispiel |
-|--------|-------------|---------|
-| `PROD_HOST` | Hostname oder IP des Servers | `server.example.com` |
-| `PROD_PORT` | SSH-Port (Default: 22) | `22` |
-| `PROD_USER` | SSH-Benutzername auf dem Server | `camino14` |
-| `PROD_SSH_PRIVATE_KEY` | Privater SSH-Schlüssel (vollständiger Inhalt, inkl. Header) | `-----BEGIN OPENSSH...` |
-| `PROD_DEPLOY_PATH` | Absoluter Pfad zum Deploy-Verzeichnis auf dem Server | `/home/camino14/htdocs/camino14.landolsi.de` |
-| `PROD_PHP_BIN` | Pfad zum PHP-Binary auf dem Server | `/usr/bin/php8.5` |
-| `PROD_COMPOSER_BIN` | Pfad zum Composer-Binary (optional, Default: `composer`) | `/usr/local/bin/composer` |
+```
+Tag pushen (v0.3.0)
+   → GitHub Actions: checkout + composer install --no-dev
+   → rsync: Code + vendor/ → Server
+   → SSH: TYPO3 cache:flush
+```
 
-### Optionale Fallback-Werte
+**Trigger:** Push eines Tags nach dem Muster `v*` (z.B. `v0.3.0`, `v1.0.0`)
 
-Wenn `PROD_PORT`, `PROD_PHP_BIN` oder `PROD_COMPOSER_BIN` leer sind, verwendet der Workflow:
+---
+
+## Schritt 1: Deploy-Key auf Server hinterlegen
+
+Ein dedizierter ed25519-Key wurde für GitHub Actions generiert.
+
+**Public Key → auf den Server kopieren:**
+
+```
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHf3jKOdlvGVpPCKSZsEkojwiqRINEb3VMVy+oVjzOUs github-actions-deploy@camino14
+```
+
+Auf dem Server als `landolsi-camino14` ausführen:
+
+```bash
+echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHf3jKOdlvGVpPCKSZsEkojwiqRINEb3VMVy+oVjzOUs github-actions-deploy@camino14" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+---
+
+## Schritt 2: GitHub Secrets konfigurieren
+
+GitHub Repository öffnen → **Settings → Environments → production → Environment secrets**
+
+| Secret | Wert |
+|--------|------|
+| `PROD_HOST` | `host7.rosenheim-web-services.de` |
+| `PROD_PORT` | `22` (oder leer lassen für Default) |
+| `PROD_USER` | `landolsi-camino14` |
+| `PROD_SSH_PRIVATE_KEY` | *(privater Key — wird separat übergeben)* |
+| `PROD_DEPLOY_PATH` | `/home/landolsi-camino14/htdocs/camino14.landolsi.de` |
+| `PROD_PHP_BIN` | `php` (ggf. `/usr/bin/php8.5` wenn nötig) |
+
+### Optional / Fallback-Defaults
+
+Wenn `PROD_PORT` oder `PROD_PHP_BIN` leer sind, verwendet der Workflow:
 - Port: `22`
 - PHP: `php`
-- Composer: `composer`
 
 ---
 
-## Empfohlene GitHub-Environment-Konfiguration
+## Schritt 3: GitHub Environment anlegen
 
-1. GitHub Repository öffnen → **Settings → Environments → New environment**
+1. GitHub Repository → **Settings → Environments → New environment**
 2. Name: `production`
-3. **Required reviewers** aktivieren (mindestens 1 Person) — verhindert versehentliche Deploys
-4. Optional: **Deployment branches** auf `main` beschränken
+3. **Required reviewers** aktivieren (empfohlen — verhindert versehentliche Deploys)
+4. Deployment branches: `main` + Tags `v*`
 
 ---
 
-## Empfohlener CloudPanel Deploy-Pfad
+## Schritt 4: Einmalige Server-Vorbereitung
 
-```
-/home/<site-user>/htdocs/camino14.landolsi.de/
-```
-
-Der Docroot im CloudPanel sollte auf den `public/`-Unterordner zeigen:
-
-```
-/home/<site-user>/htdocs/camino14.landolsi.de/public
-```
-
----
-
-## Einmalige Server-Vorbereitung
-
-### 1. PHP-Version in CloudPanel
-
-- Stelle sicher, dass PHP 8.5 auf dem Server verfügbar ist
-- In CloudPanel: **Sites → camino14.landolsi.de → PHP version**
-
-### 2. Deploy-Verzeichnis anlegen
+### Deploy-Verzeichnis anlegen
 
 ```bash
-mkdir -p /home/<site-user>/htdocs/camino14.landolsi.de
+ssh landolsi-camino14@host7.rosenheim-web-services.de
+mkdir -p /home/landolsi-camino14/htdocs/camino14.landolsi.de
+mkdir -p /home/landolsi-camino14/htdocs/camino14.landolsi.de/var/cache
+mkdir -p /home/landolsi-camino14/htdocs/camino14.landolsi.de/var/log
+mkdir -p /home/landolsi-camino14/htdocs/camino14.landolsi.de/var/labels
+mkdir -p /home/landolsi-camino14/htdocs/camino14.landolsi.de/public/fileadmin
+mkdir -p /home/landolsi-camino14/htdocs/camino14.landolsi.de/public/typo3temp
+chmod -R 2775 /home/landolsi-camino14/htdocs/camino14.landolsi.de/var/
+chmod -R 2775 /home/landolsi-camino14/htdocs/camino14.landolsi.de/public/fileadmin
+chmod -R 2775 /home/landolsi-camino14/htdocs/camino14.landolsi.de/public/typo3temp
 ```
 
-### 3. SSH-Key für GitHub Actions anlegen
+### CloudPanel Docroot setzen
 
-```bash
-# Auf dem Server als site-user ausführen:
-ssh-keygen -t ed25519 -C "github-actions-deploy" -f ~/.ssh/github_deploy -N ""
-
-# Öffentlichen Key zu authorized_keys hinzufügen:
-cat ~/.ssh/github_deploy.pub >> ~/.ssh/authorized_keys
-chmod 600 ~/.ssh/authorized_keys
-
-# Privaten Key anzeigen (in GitHub Secrets eintragen):
-cat ~/.ssh/github_deploy
+In CloudPanel → Site → **camino14.landolsi.de** → Document Root:
+```
+/home/landolsi-camino14/htdocs/camino14.landolsi.de/public
 ```
 
-### 4. TYPO3-Systemkonfiguration anlegen
+### TYPO3 Systemkonfiguration anlegen
 
 `config/system/settings.php` wird **nicht** per Deployment übertragen.
-Sie muss einmalig manuell auf dem Server angelegt werden.
+Diese Datei muss einmalig manuell auf dem Server angelegt werden:
 
-Vorlage (Werte anpassen):
+```bash
+nano /home/landolsi-camino14/htdocs/camino14.landolsi.de/config/system/settings.php
+```
+
+Inhalt (Werte anpassen):
 
 ```php
 <?php
@@ -92,66 +115,50 @@ return [
     'DB' => [
         'Connections' => [
             'Default' => [
-                'driver' => 'mysqli',
-                'host' => '127.0.0.1',
-                'port' => 3306,
-                'dbname' => '<prod-db-name>',
-                'user' => '<prod-db-user>',
+                'driver'   => 'mysqli',
+                'host'     => '127.0.0.1',
+                'port'     => 3306,
+                'dbname'   => '<prod-db-name>',
+                'user'     => '<prod-db-user>',
                 'password' => '<prod-db-password>',
-                'charset' => 'utf8mb4',
+                'charset'  => 'utf8mb4',
             ],
         ],
     ],
     'SYS' => [
-        'sitename' => 'camino14.landolsi.de',
-        'encryptionKey' => '<langer-zufälliger-schlüssel>',
-        'trustedHostsPattern' => 'camino14\\.landolsi\\.de',
+        'sitename'           => 'camino14.landolsi.de',
+        'encryptionKey'      => '<langer-zufälliger-schlüssel>',
+        'trustedHostsPattern'=> 'camino14\\.landolsi\\.de',
     ],
     'MAIL' => [
-        'transport' => 'smtp',
+        'transport'             => 'smtp',
         'transport_smtp_server' => 'localhost:25',
     ],
 ];
 ```
 
-Wichtig: Ein sicherer `encryptionKey` kann mit folgendem Befehl erzeugt werden:
-
+Encryption Key erzeugen:
 ```bash
 php -r "echo bin2hex(random_bytes(50)) . PHP_EOL;"
 ```
 
-### 5. Verzeichnisse und Berechtigungen
-
-```bash
-# Auf dem Server:
-mkdir -p public/fileadmin public/typo3temp var/cache var/log var/labels
-chmod -R 2775 public/fileadmin public/typo3temp var/
-```
-
-### 6. Composer global installieren (falls nicht vorhanden)
-
-```bash
-curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-```
-
 ---
 
-## Initialer Deployment-Ablauf
+## Deployment starten
 
-1. GitHub Secrets befüllen (siehe oben)
-2. GitHub Environment `production` anlegen
-3. SSH-Key auf dem Server hinterlegen
-4. Deploy-Verzeichnis und `settings.php` auf dem Server anlegen
-5. Ersten Deployment-Workflow manuell starten (GitHub Actions → deploy-production → Run workflow)
-6. Nach Deployment: `ddev typo3 setup` würde lokale DB überschreiben — **auf Prod nicht ausführen**
+### Automatisch via Tag
 
----
+```bash
+# Lokal: neuen Tag setzen und pushen
+git tag v0.3.0
+git push origin v0.3.0
+# → GitHub Actions startet automatisch deploy-production
+```
 
-## Workflow manuell starten
+### Manuell via GitHub UI
 
-1. GitHub Repository öffnen
-2. **Actions → Deploy Production**
-3. **Run workflow** → Branch `main` auswählen → **Run workflow**
+1. GitHub Repository → **Actions → Deploy Production**
+2. **Run workflow** → Branch/Tag auswählen → **Run workflow**
 
 ---
 
@@ -169,28 +176,20 @@ ddev pull production
 ```
 
 Voraussetzungen:
-- SSH-Key lokal vorhanden (`~/.ssh/id_rsa` oder angepasst)
-- SSH-Zugang zum Production-Server
+- SSH-Zugang zu `landolsi-camino14@host7.rosenheim-web-services.de` lokal eingerichtet
 - `mysqldump` auf dem Production-Server verfügbar
 
 ---
 
 ## ddev push production
 
-> **⚠️ ACHTUNG: Überschreibt die Produktionsdatenbank!**
+> **⚠️ ACHTUNG: Überschreibt die Produktionsdatenbank! Nur in kontrollierten Situationen verwenden.**
 
 ```bash
 ddev push production
-# oder:
-ddev push production
 ```
 
-Dieser Command sollte **nur** in kontrollierten Situationen verwendet werden, z.B.:
-
-- Initiales Deployment von Testdaten auf einen frischen Server
-- Datenabgleich in einer isolierten Staging-Umgebung
-
-**Für reguläre Production-Deployments niemals die Datenbank per push übertragen!**
+**Für reguläre Code-Deployments NIE die DB per push übertragen — dafür ist GitHub Actions zuständig.**
 
 ---
 
