@@ -101,7 +101,7 @@ jobs:
           echo "✓ rsync nach ${PROD_DEPLOY_PATH} abgeschlossen"
 
       # Server braucht nur noch TYPO3 Cache leeren — composer install entfällt (vendor/ ist dabei)
-      - name: TYPO3 Cache auf Server flushen
+      - name: TYPO3 Cache auf Server flushen & Post-Setup
         env:
           PROD_HOST: ${{ secrets.PROD_HOST }}
           PROD_PORT: ${{ secrets.PROD_PORT }}
@@ -117,7 +117,14 @@ jobs:
               "${PROD_USER}@${PROD_HOST}" \
               "cd '${PROD_DEPLOY_PATH}' \
                && (${PHP} vendor/bin/typo3 cache:flush && echo '✓ TYPO3 Cache geleert') || echo '⚠ Cache-Flush übersprungen (settings.php fehlt?)' \
-               && ${PHP} vendor/bin/typo3 -V || true"
+               && (${PHP} vendor/bin/typo3 -V || true) \
+               && (${PHP} -r '
+                 \$c = @include \"${PROD_DEPLOY_PATH}/config/system/settings.php\";
+                 if (!\$c) { exit(0); }
+                 \$db = new mysqli(\$c[\"DB\"][\"Connections\"][\"Default\"][\"host\"],\$c[\"DB\"][\"Connections\"][\"Default\"][\"user\"],\$c[\"DB\"][\"Connections\"][\"Default\"][\"password\"],\$c[\"DB\"][\"Connections\"][\"Default\"][\"dbname\"]);
+                 \$db->query(\"UPDATE pages SET backend_layout=\\\"pagets__CaminoContentpage\\\",backend_layout_next_level=\\\"pagets__CaminoContentpage\\\" WHERE uid=1 AND (backend_layout=\"\" OR backend_layout IS NULL)\");
+                 echo \"✓ backend_layout geprüft (\" . \$db->affected_rows . \" Zeile(n) aktualisiert)\\n\";
+               ' && echo '✓ Post-Setup abgeschlossen') || echo '⚠ Post-Setup übersprungen'"
 
       - name: Deployment-Info
         run: |
