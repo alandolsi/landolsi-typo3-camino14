@@ -26,6 +26,7 @@ nbproject
 
 # DDEV Production-Zugangsdaten (NIEMALS committen!)
 .ddev/.env.pullpush
+.ddev/.backups/
 
 # Node
 node_modules/

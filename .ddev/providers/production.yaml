@@ -98,6 +98,22 @@ db_push_command:
     set -eu
     . "${DDEV_APPROOT}/.ddev/.env.pullpush"
 
+    if [ ! -t 0 ]; then
+      echo "❌ Production-Push nur interaktiv erlaubt."
+      echo "   Starte den Befehl direkt im Terminal und bestätige ihn dort bewusst."
+      exit 1
+    fi
+
+    echo "⚠️  PRODUCTION-DATENBANK-PUSH"
+    echo "   Ziel: ${PROD_USER}@${PROD_HOST}:${PROD_DB_NAME}"
+    echo "   Aktion: Lokale DDEV-Datenbank überschreibt Production."
+    printf "   Tippe exakt 'push-production-db' zum Fortfahren: "
+    read -r DB_CONFIRM
+    if [ "${DB_CONFIRM}" != "push-production-db" ]; then
+      echo "❌ Abgebrochen."
+      exit 1
+    fi
+
     TS=$(date +%Y%m%d_%H%M%S)
     TMP_FILE="/tmp/ddev_prod_push_${TS}.sql.gz"
 
@@ -131,6 +147,22 @@ files_push_command:
   command: |
     set -eu
     . "${DDEV_APPROOT}/.ddev/.env.pullpush"
+
+    if [ ! -t 0 ]; then
+      echo "❌ Production-Push nur interaktiv erlaubt."
+      echo "   Starte den Befehl direkt im Terminal und bestätige ihn dort bewusst."
+      exit 1
+    fi
+
+    echo "⚠️  PRODUCTION-FILEADMIN-PUSH"
+    echo "   Ziel: ${PROD_USER}@${PROD_HOST}:${PROD_FILES_PATH}"
+    echo "   Aktion: Lokales fileadmin wird nach Production synchronisiert."
+    printf "   Tippe exakt 'push-production-files' zum Fortfahren: "
+    read -r FILES_CONFIRM
+    if [ "${FILES_CONFIRM}" != "push-production-files" ]; then
+      echo "❌ Abgebrochen."
+      exit 1
+    fi
 
     LOCAL_FILES="${DDEV_APPROOT}/${LOCAL_FILES_PATH:-public/fileadmin/}"
 
