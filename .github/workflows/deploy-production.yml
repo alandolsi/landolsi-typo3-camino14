@@ -46,13 +46,14 @@ jobs:
       - name: Composer install (production, ohne dev-Pakete)
         run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-progress
 
-      # SSH-Key einrichten (dedizierter Deploy-Key, nicht der persönliche Key)
+      # SSH-Key einrichten — base64-kodiert gespeichert, um Newline-Probleme zu vermeiden
       - name: SSH-Key einrichten
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo "${{ secrets.PROD_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          echo "${{ secrets.PROD_SSH_PRIVATE_KEY_B64 }}" | base64 -d > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+          ssh-keygen -l -f ~/.ssh/deploy_key
 
       - name: known_hosts befüllen
         env:
