@@ -207,6 +207,33 @@ Details und Voraussetzungen: `docs/deployment.md`
 
 ---
 
+## Cookie / Consent Banner
+
+Das Projekt nutzt eine schlanke Consent-Lösung im eigenen Site-Package statt einer
+zusätzlichen TYPO3-Extension. Das Banner verwaltet Kategorien für:
+
+- technisch notwendig
+- Komfort-Einstellungen
+- Statistik
+- Marketing
+
+Die Statistik-Kategorie aktiviert OpenPanel-Tracking für Seitenaufrufe auf der
+Production-Domain `camino14.landolsi.de`. Lokale DDEV- und LAN-Aufrufe werden
+nicht getrackt. Die Komfort-Kategorie steuert die dauerhafte Speicherung des
+Camino-Farbschemas im Browser. Marketing-Dienste sind aktuell nicht aktiv.
+
+Dateien:
+
+- `packages/site-package/Resources/Public/cookie-consent/cookie-consent.css`
+- `packages/site-package/Resources/Public/cookie-consent/cookie-consent.js`
+- `packages/site-package/Resources/Public/openpanel/openpanel-tracking.js`
+
+OpenPanel nutzt die öffentliche Client-ID und die API-URL der Instanz. Der
+Client-Secret ist nur für serverseitige Events vorgesehen und wird nicht im
+Frontend verwendet oder committed.
+
+---
+
 ## Roadmap / Nächste Schritte
 
 - [ ] GitHub Environment `production` mit Required Reviewers anlegen
