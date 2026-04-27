@@ -9,11 +9,12 @@
             "typo3/cms-composer-installers": true
         },
         "platform": {
-            "php": "8.2.0"
+            "php": "8.5.0"
         },
         "sort-packages": true
     },
     "require": {
+        "friendsoftypo3/content-blocks": "^2.3",
         "landolsi/site-package": "dev-main",
         "typo3/cms-backend": "^14.0",
         "typo3/cms-belog": "^14.0",

@@ -90,6 +90,8 @@
         const slides = content.slides.map(function (slide, index) {
             const isActive = index === 0 ? ' is-active' : '';
             const ariaHidden = index === 0 ? 'false' : 'true';
+            const loading = index === 0 ? 'eager' : 'lazy';
+            const fetchPriority = index === 0 ? ' fetchpriority="high"' : '';
             return (
                 '<article class="lp-carousel__slide' + isActive + '" data-lp-carousel-slide aria-hidden="' + ariaHidden + '">' +
                     '<div class="lp-carousel__copy">' +
@@ -101,7 +103,7 @@
                         '</div>' +
                     '</div>' +
                     '<div class="lp-carousel__media">' +
-                        '<img class="lp-carousel__image" src="' + escapeHtml(slide.image) + '" alt="' + escapeHtml(slide.alt) + '" loading="lazy">' +
+                        '<img class="lp-carousel__image" src="' + escapeHtml(slide.image) + '" alt="' + escapeHtml(slide.alt) + '" loading="' + loading + '"' + fetchPriority + ' width="1200" height="800">' +
                     '</div>' +
                 '</article>'
             );

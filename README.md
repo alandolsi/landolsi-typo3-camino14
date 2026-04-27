@@ -111,7 +111,9 @@ landolsi-typo3-camino14/
 │   ├── sites/                     # Site-Konfigurationen (committed)
 │   └── system/                    # ⚠️ settings.php + additional.php NICHT im Repo
 ├── docs/
+│   ├── content-blocks.md          # Redaktionelle Content-Blocks-Hinweise
 │   └── deployment.md              # Server-Setup, Secrets, Deployment-Anleitung
+├── packages/site-package/          # Projekt-Site-Package, Assets und Content Blocks
 ├── public/                        # Docroot
 ├── vendor/                        # Composer-Abhängigkeiten (ignoriert)
 ├── composer.json
@@ -141,7 +143,7 @@ Die CI-Pipeline läuft bei jedem Push auf `main`/`develop` und bei Pull Requests
 | Job | Was passiert |
 |-----|-------------|
 | `validate` | `composer validate --strict` |
-| `build` | `composer install`, TYPO3-Version prüfen, Autoload verifizieren |
+| `build` | `composer install`, TYPO3-Version prüfen, JS-Syntax prüfen, Content Blocks linten, Autoload verifizieren |
 
 Datei: `.github/workflows/ci.yml`
 
@@ -151,10 +153,12 @@ Datei: `.github/workflows/ci.yml`
 
 Das Production-Deployment erfolgt **code-only** via `rsync + SSH` auf den CloudPanel-Server.
 
-- **Trigger:** Push auf `main` oder manuell via `workflow_dispatch`
+- **Trigger:** Push eines Tags nach Muster `v*` oder manuell via `workflow_dispatch`
 - **GitHub Environment:** `production` (Required Reviewers empfohlen)
 - **Was deployed wird:** Code — kein Datenbankdump, kein fileadmin
-- **Ausgeschlossen:** `.git/`, `.ddev/`, `var/`, `config/system/settings.php`
+- **Ausgeschlossen:** `.git/`, `.github/`, `.ddev/`, `var/`, `public/fileadmin/`, `config/system/settings.php`
+- **Sicherungen:** vor dem rsync werden `fileadmin` und, falls `mysqldump` verfügbar ist, die Datenbank in `../backups` gesichert
+- **Healthcheck:** nach dem Deploy werden zentrale Seiten auf HTTP 200 und TYPO3-Oops-Marker geprüft
 
 Benötigte Secrets → siehe `docs/deployment.md`
 
@@ -197,13 +201,38 @@ Details und Voraussetzungen: `docs/deployment.md`
 
 ---
 
+## Content Blocks / Redaktion
+
+Das Projekt nutzt `friendsoftypo3/content-blocks` für eigene redaktionelle Inhaltselemente im Site-Package.
+Aktuell enthalten ist ein erstes Element `Camino CTA` mit Headline, Kicker, Richtext, Button-Link und Vorschaubild inklusive Backend-Preview.
+
+Dateien:
+
+- `packages/site-package/ContentBlocks/ContentElements/camino-cta/config.yaml`
+- `packages/site-package/ContentBlocks/ContentElements/camino-cta/templates/frontend.fluid.html`
+- `packages/site-package/ContentBlocks/ContentElements/camino-cta/templates/backend-preview.fluid.html`
+- `packages/site-package/Resources/Public/content-blocks/content-blocks.css`
+
+Nach Änderungen an Content-Block-Konfigurationen lokal ausführen:
+
+```bash
+ddev typo3 content-blocks:lint
+ddev typo3 cache:flush -g system
+ddev typo3 extension:setup --extension=site_package
+```
+
+Details: `docs/content-blocks.md`
+
+---
+
 ## Sicherheitshinweise
 
 - `config/system/settings.php` enthält DB-Credentials — **nie** committen
 - `.ddev/.env.pullpush` enthält Production-Zugangsdaten — **nie** committen
 - Alle Produktionszugriffe laufen SSH-Key-basiert
 - GitHub Secrets werden in keinem Log ausgegeben
-- Production-Deployment ist code-only — keine automatische DB-Migration
+- Production-Deployment ist code-only — es läuft nur das notwendige Extension-Schema-Setup, keine Inhaltsmigration
+- OpenPanel-Client-Secret wird nicht im Frontend verwendet und nicht committed
 
 ---
 
@@ -240,5 +269,5 @@ Frontend verwendet oder committed.
 - [ ] GitHub Secrets befüllen (siehe `docs/deployment.md`)
 - [ ] SSH-Key auf CloudPanel-Server hinterlegen
 - [ ] `config/system/settings.php` auf Production anlegen
-- [ ] TYPO3-Site-Domain in `config/sites/*/config.yaml` auf `camino14.landolsi.de` anpassen
-- [ ] Camino-Theme im TYPO3-Backend konfigurieren
+- [ ] Erste Inhalte mit dem Content Block `Camino CTA` redaktionell pflegen
+- [ ] Optional: Homepage-Carousel in einem nächsten Schritt vollständig als Content Block modellieren

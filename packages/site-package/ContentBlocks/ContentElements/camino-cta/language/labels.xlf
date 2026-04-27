@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file datatype="plaintext" original="labels.xlf" source-language="de" product-name="landolsi/camino-cta">
+    <header/>
+    <body>
+      <trans-unit id="title">
+        <source>Camino CTA</source>
+      </trans-unit>
+      <trans-unit id="description">
+        <source>Teaser-Element mit Bild, Richtext und Button für Landingpages.</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

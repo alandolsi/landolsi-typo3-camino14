@@ -1,0 +1,51 @@
+name: landolsi/camino-cta
+typeName: landolsi_camino_cta
+group: default
+prefixFields: true
+prefixType: full
+basics:
+  - TYPO3/Appearance
+  - TYPO3/Links
+fields:
+  - identifier: TYPO3/Header
+    type: Basic
+  - identifier: kicker
+    type: Text
+    label: Kicker
+    placeholder: z.B. Camino Demo
+    max: 80
+  - identifier: text
+    type: Textarea
+    label: Text
+    enableRichtext: true
+    rows: 5
+  - identifier: button_label
+    type: Text
+    label: Button-Beschriftung
+    default: Mehr erfahren
+    max: 80
+  - identifier: button_link
+    type: Link
+    label: Button-Link
+    allowedTypes:
+      - page
+      - url
+      - file
+  - identifier: image
+    type: File
+    label: Vorschaubild
+    allowed: common-image-types
+    maxitems: 1
+    cropVariants:
+      default:
+        title: Vorschau
+        allowedAspectRatios:
+          landscape:
+            title: 16:9
+            value: 16 / 9
+          square:
+            title: 1:1
+            value: 1
+          free:
+            title: Frei
+            value: 0

@@ -1,0 +1,33 @@
+<html
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:cb="http://typo3.org/ns/TYPO3/CMS/ContentBlocks/ViewHelpers"
+    data-namespace-typo3-fluid="true"
+>
+
+<f:layout name="Preview"/>
+
+<f:section name="Header">
+    <cb:link.editRecord uid="{data.uid}" table="{data.mainType}">{data.header}</cb:link.editRecord>
+</f:section>
+
+<f:section name="Content">
+    <div style="display:flex; gap:12px; align-items:flex-start;">
+        <f:if condition="{data.image.0}">
+            <div style="flex:0 0 120px;">
+                <f:image image="{data.image.0}" width="120c" height="68c" />
+            </div>
+        </f:if>
+        <div>
+            <f:if condition="{data.kicker}">
+                <strong style="display:block; color:#6b7280; font-size:11px; text-transform:uppercase;">{data.kicker}</strong>
+            </f:if>
+            <f:if condition="{data.text}">
+                <div style="margin-top:4px;">{data.text -> f:format.stripTags() -> f:format.crop(maxCharacters: 160)}</div>
+            </f:if>
+            <f:if condition="{data.button_link.url}">
+                <div style="margin-top:8px;">Button: {data.button_label}</div>
+            </f:if>
+        </div>
+    </div>
+</f:section>
+</html>

@@ -38,6 +38,21 @@ jobs:
       - name: composer validate
         run: composer validate --strict --no-interaction
 
+      - name: Secret-Regressionscheck
+        run: |
+          secret_prefix="$(printf '%s_%s' 'sec' '')"
+          secret_word="secret"
+          openpanel_pattern="openpanel[^[:space:]]*${secret_word}"
+          if git --no-pager grep -nE "${secret_prefix}|client[Ss]ecret|${openpanel_pattern}" -- \
+            ':!vendor' \
+            ':!var' \
+            ':!public/typo3temp' \
+            ':!composer.lock' \
+            ':!.github/workflows/ci.yml'; then
+            echo "Potentielles Secret im Repository gefunden."
+            exit 1
+          fi
+
   # ─────────────────────────────────────────────
   # Job 2: Projekt bauen und grundlegend prüfen
   # ─────────────────────────────────────────────
@@ -74,6 +89,19 @@ jobs:
 
       - name: TYPO3-Version ausgeben
         run: vendor/bin/typo3 -V
+
+      - name: JavaScript-Syntax prüfen
+        run: |
+          find packages/site-package/Resources/Public -name '*.js' -print0 \
+            | xargs -0 -r -n1 node --check
+
+      - name: Projekt-Smoke-Checks
+        run: |
+          test -f packages/site-package/Resources/Public/cookie-consent/cookie-consent.js
+          test -f packages/site-package/Resources/Public/openpanel/openpanel-tracking.js
+          test -f packages/site-package/Resources/Public/content-blocks/content-blocks.css
+          test -f public/robots.txt
+          vendor/bin/typo3 content-blocks:lint
 
       - name: Prüfen ob Autoload korrekt generiert wurde
         run: |

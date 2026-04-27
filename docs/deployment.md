@@ -17,8 +17,10 @@ Der Server muss **kein Composer** installiert haben — `vendor/` kommt bereits 
 ```
 Tag pushen (v0.3.0)
    → GitHub Actions: checkout + composer install --no-dev
+   → SSH: Pre-Deployment-Backup von fileadmin + Datenbank
    → rsync: Code + vendor/ → Server
-   → SSH: TYPO3 cache:flush
+   → SSH: Content-Block-Schema prüfen + TYPO3 cache:flush
+   → HTTP-Healthcheck zentraler Seiten
 ```
 
 **Trigger:** Push eines Tags nach dem Muster `v*` (z.B. `v0.3.0`, `v1.0.0`)
@@ -53,7 +55,7 @@ GitHub Repository öffnen → **Settings → Environments → production → Env
 | `PROD_HOST` | `host7.rosenheim-web-services.de` |
 | `PROD_PORT` | `22` (oder leer lassen für Default) |
 | `PROD_USER` | `landolsi-camino14` |
-| `PROD_SSH_PRIVATE_KEY` | *(privater Key — wird separat übergeben)* |
+| `PROD_SSH_PRIVATE_KEY_B64` | privater Deploy-Key, base64-kodiert |
 | `PROD_DEPLOY_PATH` | `/home/landolsi-camino14/htdocs/camino14.landolsi.de` |
 | `PROD_PHP_BIN` | `php` (ggf. `/usr/bin/php8.5` wenn nötig) |
 
@@ -159,6 +161,33 @@ git push origin v0.3.0
 
 1. GitHub Repository → **Actions → Deploy Production**
 2. **Run workflow** → Branch/Tag auswählen → **Run workflow**
+
+---
+
+## Backup und Healthcheck
+
+Vor jedem Code-Deployment erstellt der Workflow auf dem Server Sicherungen unter:
+
+```bash
+/home/landolsi-camino14/htdocs/backups/
+```
+
+Gesichert werden:
+
+- `public/fileadmin` als `fileadmin-<timestamp>.tar.gz`
+- die Datenbank als `database-<timestamp>.sql.gz`, sofern `mysqldump` und `config/system/settings.php` verfügbar sind
+
+Backups älter als 14 Tage werden automatisch entfernt. Nach dem Deployment prüft
+der Workflow die wichtigsten öffentlichen URLs (`/`, `/projekte`, `/leistungen`,
+`/kontakt`, `/en/projects`) auf HTTP 200 und typische TYPO3-Oops-Marker.
+
+---
+
+## fileadmin bleibt außerhalb des Code-Deployments
+
+`public/fileadmin/` enthält redaktionelle Dateien und TYPO3-processed Images.
+Der Ordner wird im rsync-Deployment explizit ausgeschlossen, damit ein Code-Deploy
+keine Uploads löscht. Daten und Dateien werden separat über DDEV synchronisiert.
 
 ---
 
