@@ -360,14 +360,14 @@ $images = [
     'leistung-typo3' => [
         'filename' => 'leistung-typo3.jpg',
         'title' => 'TYPO3 Entwicklung',
-        'alt' => 'Code Editor fuer TYPO3 Entwicklung',
+        'alt' => 'Code Editor für TYPO3 Entwicklung',
         'description' => 'Service image for TYPO3 development',
         'url' => 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=800&fit=crop&auto=format&q=80',
     ],
     'leistung-seo' => [
         'filename' => 'leistung-seo.jpg',
         'title' => 'SEO & Performance',
-        'alt' => 'Analytics Dashboard fuer SEO und Performance',
+        'alt' => 'Analytics Dashboard für SEO und Performance',
         'description' => 'Service image for SEO and performance',
         'url' => 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop&auto=format&q=80',
     ],
@@ -381,7 +381,7 @@ $images = [
     'referenz-2' => [
         'filename' => 'referenz-2.jpg',
         'title' => 'Content Workflow',
-        'alt' => 'Workspace fuer redaktionelle TYPO3 Workflows',
+        'alt' => 'Workspace für redaktionelle TYPO3 Workflows',
         'description' => 'Reference image two',
         'url' => 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=1200&h=800&fit=crop&auto=format&q=80',
     ],
@@ -572,19 +572,19 @@ insertFileReference($pdo, $timestamp, $fileIds['hero-home'], $homeHeroEn, 'tt_co
 $homeTeasersDe = [
     [
         'header' => 'Strategie & Konzeption',
-        'bodytext' => '<p>Wir bringen Positionierung, Seitenstruktur und Nutzerfuehrung frueh zusammen, damit Design und Technik spaeter sauber ineinandergreifen.</p>',
+        'bodytext' => '<p>Wir bringen Positionierung, Seitenstruktur und Nutzerführung früh zusammen, damit Design und Technik später sauber ineinandergreifen.</p>',
         'frame_class' => 'bg-10',
         'sorting' => 256,
     ],
     [
         'header' => 'TYPO3 & Composer',
-        'bodytext' => '<p>TYPO3 14, Composer, DDEV und reproduzierbare Deployments sorgen fuer ein Projektsetup, das nicht nur heute, sondern auch in einem Jahr noch Freude macht.</p>',
+        'bodytext' => '<p>TYPO3 14, Composer, DDEV und reproduzierbare Deployments sorgen für ein Projektsetup, das nicht nur heute, sondern auch in einem Jahr noch Freude macht.</p>',
         'frame_class' => 'bg-80',
         'sorting' => 384,
     ],
     [
         'header' => 'SEO & Betrieb',
-        'bodytext' => '<p>Von Core Web Vitals bis zur Produktionsuebergabe bleibt der Fokus auf Sichtbarkeit, Performance und einer wartbaren Architektur.</p>',
+        'bodytext' => '<p>Von Core Web Vitals bis zur Produktionsübergabe bleibt der Fokus auf Sichtbarkeit, Performance und einer wartbaren Architektur.</p>',
         'frame_class' => 'bg-10',
         'sorting' => 512,
     ],
@@ -662,7 +662,7 @@ $aboutText = insertContent($pdo, $timestamp, [
     'colPos' => 0,
     'CType' => 'text',
     'header' => 'Digitale Projekte mit Substanz',
-    'bodytext' => '<p><strong>Landolsi Webdesign</strong> steht fuer Websites, die nicht nur gut aussehen, sondern intern genauso gut funktionieren. Wir denken Design, Content, TYPO3-Setup und Deployment als zusammenhaengenden Ablauf.</p><p>Gerade mit TYPO3 14 und Camino entstehen dadurch schnelle, wartbare Projekte, die Redaktionen Sicherheit geben und Unternehmen einen starken digitalen Auftritt liefern.</p>',
+    'bodytext' => '<p><strong>Landolsi Webdesign</strong> steht für Websites, die nicht nur gut aussehen, sondern intern genauso gut funktionieren. Wir denken Design, Content, TYPO3-Setup und Deployment als zusammenhängenden Ablauf.</p><p>Gerade mit TYPO3 14 und Camino entstehen dadurch schnelle, wartbare Projekte, die Redaktionen Sicherheit geben und Unternehmen einen starken digitalen Auftritt liefern.</p>',
 ]);
 
 insertContent($pdo, $timestamp, [
@@ -709,7 +709,7 @@ $servicesHero = insertContent($pdo, $timestamp, [
     'sorting' => 128,
     'colPos' => 2,
     'CType' => 'camino_hero_text_only',
-    'header' => 'Leistungen fuer anspruchsvolle TYPO3-Projekte',
+    'header' => 'Leistungen für anspruchsvolle TYPO3-Projekte',
     'subheader' => 'Konzeption, Design, Entwicklung und Optimierung in einem belastbaren Setup.',
 ]);
 $servicesHeroEn = insertContent($pdo, $timestamp, [
@@ -729,7 +729,7 @@ $servicesIntro = insertContent($pdo, $timestamp, [
     'sorting' => 256,
     'colPos' => 0,
     'CType' => 'text',
-    'header' => 'Was wir fuer digitale Marken aufsetzen',
+    'header' => 'Was wir für digitale Marken aufsetzen',
     'bodytext' => '<p>Wir arbeiten an Websites nicht in isolierten Disziplinen, sondern entlang eines sauberen Gesamtprozesses: Strategie, Designsystem, TYPO3-Umsetzung und Performance greifen direkt ineinander.</p>',
 ]);
 $servicesIntroEn = insertContent($pdo, $timestamp, [
@@ -773,7 +773,7 @@ $serviceItemsDe = [
         'image' => 'leistung-webdesign',
         'category' => 'Design',
         'header' => 'Webdesign & UX',
-        'text' => 'Individuelle Interfaces, klare Seitendramaturgie und starke Einstiege fuer Unternehmen, die digital professionell wirken wollen.',
+        'text' => 'Individuelle Interfaces, klare Seitendramaturgie und starke Einstiege für Unternehmen, die digital professionell wirken wollen.',
         'link_label' => 'Zu Webdesign',
         'link' => 'https://landolsi.de/leistungen/webdesign',
     ],
@@ -781,7 +781,7 @@ $serviceItemsDe = [
         'image' => 'leistung-typo3',
         'category' => 'CMS',
         'header' => 'TYPO3 Entwicklung',
-        'text' => 'Composer-basierte TYPO3-Projekte mit Camino, Site Sets und einer Architektur, die Redaktionen und Deployments gleichermassen unterstuetzt.',
+        'text' => 'Composer-basierte TYPO3-Projekte mit Camino, Site Sets und einer Architektur, die Redaktionen und Deployments gleichermaßen unterstützt.',
         'link_label' => 'Zu TYPO3',
         'link' => 'https://landolsi.de/leistungen/typo3',
     ],
@@ -789,7 +789,7 @@ $serviceItemsDe = [
         'image' => 'leistung-seo',
         'category' => 'Performance',
         'header' => 'SEO & Betrieb',
-        'text' => 'Technische SEO, Core Web Vitals und sauberer Betrieb sorgen dafuer, dass gute Inhalte langfristig sichtbar und messbar werden.',
+        'text' => 'Technische SEO, Core Web Vitals und sauberer Betrieb sorgen dafür, dass gute Inhalte langfristig sichtbar und messbar werden.',
         'link_label' => 'Zu SEO',
         'link' => 'https://landolsi.de/leistungen/seo',
     ],
@@ -854,7 +854,7 @@ $portfolioHero = insertContent($pdo, $timestamp, [
     'colPos' => 2,
     'CType' => 'camino_hero_text_only',
     'header' => 'Ausgewählte Projekte',
-    'subheader' => 'Beispiele fuer Layout, Content-Fuehrung und TYPO3-Umsetzung.',
+    'subheader' => 'Beispiele für Layout, Content-Führung und TYPO3-Umsetzung.',
 ]);
 $portfolioHeroEn = insertContent($pdo, $timestamp, [
     'pid' => $pageIds['portfolio'],
@@ -875,7 +875,7 @@ $portfolioGrid = insertContent($pdo, $timestamp, [
     'CType' => 'camino_textmedia_teaser_grid',
     'header' => 'Drei typische Projektmuster',
     'subheader' => 'Vom Relaunch bis zur Content-Plattform',
-    'bodytext' => '<p>Die folgenden Beispiele zeigen, wie Design, TYPO3-Struktur und inhaltliche Priorisierung zusammenspielen koennen.</p>',
+    'bodytext' => '<p>Die folgenden Beispiele zeigen, wie Design, TYPO3-Struktur und inhaltliche Priorisierung zusammenspielen können.</p>',
     'tx_themecamino_list_elements' => 3,
 ]);
 $portfolioGridEn = insertContent($pdo, $timestamp, [
@@ -897,7 +897,7 @@ $portfolioItemsDe = [
         'image' => 'referenz-1',
         'category' => 'Relaunch',
         'header' => 'Corporate Relaunch',
-        'text' => 'Ein neuer digitaler Auftritt mit klarer Seitenarchitektur, staerkerer Bildwelt und einem fokussierten Conversion-Einstieg.',
+        'text' => 'Ein neuer digitaler Auftritt mit klarer Seitenarchitektur, stärkerer Bildwelt und einem fokussierten Conversion-Einstieg.',
         'link_label' => 'Projekt anfragen',
         'link' => 't3://page?uid=' . $pageIds['contact'],
     ],
@@ -905,7 +905,7 @@ $portfolioItemsDe = [
         'image' => 'referenz-2',
         'category' => 'Content',
         'header' => 'Redaktionsplattform',
-        'text' => 'TYPO3 so aufgesetzt, dass mehrere Teams Inhalte sicher pflegen, erweitern und strukturiert ausspielen koennen.',
+        'text' => 'TYPO3 so aufgesetzt, dass mehrere Teams Inhalte sicher pflegen, erweitern und strukturiert ausspielen können.',
         'link_label' => 'Mehr erfahren',
         'link' => 't3://page?uid=' . $pageIds['about'],
     ],
@@ -977,8 +977,8 @@ $contactHero = insertContent($pdo, $timestamp, [
     'sorting' => 128,
     'colPos' => 2,
     'CType' => 'camino_hero_text_only',
-    'header' => 'Lassen Sie uns ueber Ihr naechstes TYPO3-Projekt sprechen',
-    'subheader' => 'Klar, direkt und mit einem Blick fuer Strategie, Design und technische Umsetzung.',
+    'header' => 'Lassen Sie uns über Ihr nächstes TYPO3-Projekt sprechen',
+    'subheader' => 'Klar, direkt und mit einem Blick für Strategie, Design und technische Umsetzung.',
 ]);
 $contactHeroEn = insertContent($pdo, $timestamp, [
     'pid' => $pageIds['contact'],
@@ -1013,8 +1013,8 @@ $contactTextEn = insertContent($pdo, $timestamp, [
 ]);
 
 $contactTeasersDe = [
-    ['header' => 'Projektstart', 'bodytext' => '<p>Wir strukturieren Ziele, Umfang und naechste Schritte so, dass aus der Idee schnell ein belastbares Projekt wird.</p>', 'sorting' => 384, 'frame_class' => 'bg-10', 'label' => 'Anfrage senden', 'link' => 'mailto:info@landolsi.de'],
-    ['header' => 'Weiterentwicklung', 'bodytext' => '<p>Bestehende TYPO3-Projekte uebernehmen wir ebenfalls - von Redaktionsoptimierung bis Release-Vorbereitung.</p>', 'sorting' => 512, 'frame_class' => 'bg-80', 'label' => 'Support anfragen', 'link' => 'mailto:info@landolsi.de'],
+    ['header' => 'Projektstart', 'bodytext' => '<p>Wir strukturieren Ziele, Umfang und nächste Schritte so, dass aus der Idee schnell ein belastbares Projekt wird.</p>', 'sorting' => 384, 'frame_class' => 'bg-10', 'label' => 'Anfrage senden', 'link' => 'mailto:info@landolsi.de'],
+    ['header' => 'Weiterentwicklung', 'bodytext' => '<p>Bestehende TYPO3-Projekte übernehmen wir ebenfalls - von Redaktionsoptimierung bis Release-Vorbereitung.</p>', 'sorting' => 512, 'frame_class' => 'bg-80', 'label' => 'Support anfragen', 'link' => 'mailto:info@landolsi.de'],
 ];
 $contactTeasersEn = [
     ['header' => 'Project kick-off', 'bodytext' => '<p>We help structure scope, goals and next steps so an initial idea quickly becomes a reliable project foundation.</p>', 'sorting' => 384, 'frame_class' => 'bg-10', 'label' => 'Send inquiry', 'link' => 'mailto:info@landolsi.de'],
@@ -1055,7 +1055,7 @@ $privacyText = insertContent($pdo, $timestamp, [
     'colPos' => 0,
     'CType' => 'text',
     'header' => 'Datenschutz',
-    'bodytext' => '<p>Dies ist eine lokale Demo-Seite. Fuer ein reales Projekt muessen Datenschutzhinweise, Tracking-Informationen und Auftragsverarbeitung verbindlich mit den tatsaechlichen Prozessen abgestimmt werden.</p>',
+    'bodytext' => '<p>Dies ist eine lokale Demo-Seite. Für ein reales Projekt müssen Datenschutzhinweise, Tracking-Informationen und Auftragsverarbeitung verbindlich mit den tatsächlichen Prozessen abgestimmt werden.</p>',
 ]);
 insertContent($pdo, $timestamp, [
     'pid' => $pageIds['privacy'],
@@ -1075,7 +1075,7 @@ $imprintText = insertContent($pdo, $timestamp, [
     'colPos' => 0,
     'CType' => 'text',
     'header' => 'Impressum',
-    'bodytext' => '<p>Dies ist eine lokale Demo-Seite fuer das TYPO3-14-Camino-Projekt. Vor einem echten Launch muessen alle rechtlichen Angaben fuer Betreiber, Kontakt und Verantwortlichkeit verbindlich gepflegt werden.</p>',
+    'bodytext' => '<p>Dies ist eine lokale Demo-Seite für das TYPO3-14-Camino-Projekt. Vor einem echten Launch müssen alle rechtlichen Angaben für Betreiber, Kontakt und Verantwortlichkeit verbindlich gepflegt werden.</p>',
 ]);
 insertContent($pdo, $timestamp, [
     'pid' => $pageIds['imprint'],
@@ -1191,7 +1191,7 @@ $footerMetaEn = insertContent($pdo, $timestamp, [
 
 $footerBrandItemsDe = [
     ['header' => 'TYPO3 14 + Camino', 'text' => 'Lokales Showcase-Projekt mit sauberem Setup, gutem Redaktionsflow und Fokus auf Performance.'],
-    ['header' => 'Projekt besprechen', 'text' => 'Wenn Sie eine professionelle TYPO3-Website planen, sprechen wir gern ueber Strategie und Umsetzung.', 'link' => 'https://landolsi.de/kontakt', 'link_label' => 'Jetzt anfragen'],
+    ['header' => 'Projekt besprechen', 'text' => 'Wenn Sie eine professionelle TYPO3-Website planen, sprechen wir gern über Strategie und Umsetzung.', 'link' => 'https://landolsi.de/kontakt', 'link_label' => 'Jetzt anfragen'],
 ];
 $footerBrandItemsEn = [
     ['header' => 'TYPO3 14 + Camino', 'text' => 'Local showcase project with clean setup, strong editorial flow and performance in focus.'],

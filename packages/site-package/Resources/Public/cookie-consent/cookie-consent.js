@@ -6,38 +6,38 @@
 
     const TEXTS = {
         de: {
-            bannerTitle: 'Privatsphaere-Einstellungen',
-            bannerText: 'Wir verwenden technisch notwendige Speicherungen fuer den Betrieb der Website. Komfort-Funktionen wie das Farbschema speichern wir nur, wenn Sie zustimmen.',
+            bannerTitle: 'Privatsphäre-Einstellungen',
+            bannerText: 'Wir verwenden technisch notwendige Speicherungen für den Betrieb der Website. Das Farbschema merken wir für die aktuelle Sitzung; dauerhaft speichern wir Komfort-Funktionen nur, wenn Sie zustimmen.',
             acceptAll: 'Alle akzeptieren',
             necessaryOnly: 'Nur notwendige',
             customize: 'Einstellungen',
             settingsTitle: 'Cookie- und Datenschutz-Einstellungen',
-            settingsIntro: 'Hier koennen Sie festlegen, welche Kategorien aktiviert werden. Technisch notwendige Speicherungen sind fuer den Betrieb erforderlich.',
-            close: 'Schliessen',
+            settingsIntro: 'Hier können Sie festlegen, welche Kategorien aktiviert werden. Technisch notwendige Speicherungen sind für den Betrieb erforderlich.',
+            close: 'Schließen',
             save: 'Auswahl speichern',
             manage: 'Datenschutz',
             groups: {
                 necessary: {
                     title: 'Technisch notwendig',
-                    text: 'Erforderlich fuer Grundfunktionen wie die Speicherung Ihrer Consent-Auswahl. Diese Kategorie ist immer aktiv.',
+                    text: 'Erforderlich für Grundfunktionen wie die Speicherung Ihrer Consent-Auswahl. Diese Kategorie ist immer aktiv.',
                 },
                 preferences: {
                     title: 'Komfort',
-                    text: 'Speichert freiwillige Einstellungen wie das gewaehlte Camino-Farbschema auf diesem Geraet.',
+                    text: 'Speichert freiwillige Einstellungen wie das gewählte Camino-Farbschema dauerhaft auf diesem Gerät.',
                 },
                 statistics: {
                     title: 'Statistik',
-                    text: 'Erlaubt Reichweitenmessung mit OpenPanel, damit wir Seitenaufrufe und Nutzung der Demo-Website auswerten koennen.',
+                    text: 'Erlaubt Reichweitenmessung mit OpenPanel, damit wir Seitenaufrufe und Nutzung der Demo-Website auswerten können.',
                 },
                 marketing: {
                     title: 'Marketing',
-                    text: 'Reserviert fuer externe Marketing- oder Einbettungsdienste. Aktuell sind keine Marketing-Dienste aktiv.',
+                    text: 'Reserviert für externe Marketing- oder Einbettungsdienste. Aktuell sind keine Marketing-Dienste aktiv.',
                 },
             },
         },
         en: {
             bannerTitle: 'Privacy preferences',
-            bannerText: 'We use technically necessary storage to operate this website. Comfort features such as the color scheme are stored only if you agree.',
+            bannerText: 'We use technically necessary storage to operate this website. The color scheme is remembered for the current session; comfort features are stored permanently only if you agree.',
             acceptAll: 'Accept all',
             necessaryOnly: 'Necessary only',
             customize: 'Settings',
@@ -53,7 +53,7 @@
                 },
                 preferences: {
                     title: 'Preferences',
-                    text: 'Stores voluntary settings such as the selected Camino color scheme on this device.',
+                    text: 'Stores voluntary settings such as the selected Camino color scheme permanently on this device.',
                 },
                 statistics: {
                     title: 'Statistics',

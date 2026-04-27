@@ -1,13 +1,14 @@
 /**
  * Camino Color Switcher
  * Switches between the 4 official Camino CSS theme classes.
- * Persists choice in localStorage when preference consent is enabled.
+ * Keeps the current session in sync and persists choice when preference consent is enabled.
  */
 
 (function () {
     'use strict';
 
     const STORAGE_KEY = 'camino_color_scheme';
+    const SESSION_STORAGE_KEY = 'camino_color_scheme_session';
 
     const THEMES = [
         { id: 'theme-caramel-cream', label: 'Caramel Cream', swatch: 'caramel' },
@@ -23,18 +24,52 @@
         return Boolean(window.LandolsiConsent && window.LandolsiConsent.has('preferences'));
     }
 
-    function getStoredTheme() {
-        if (!preferencesAllowed()) {
+    function isKnownTheme(themeId) {
+        return ALL_CLASSES.includes(themeId);
+    }
+
+    function readStorage(storage, key) {
+        try {
+            const value = storage.getItem(key);
+            return isKnownTheme(value) ? value : null;
+        } catch (e) {
             return null;
         }
-        return localStorage.getItem(STORAGE_KEY);
+    }
+
+    function writeStorage(storage, key, value) {
+        try {
+            storage.setItem(key, value);
+        } catch (e) {
+            // Ignore unavailable browser storage; the theme still applies on the current page.
+        }
+    }
+
+    function removeStorage(storage, key) {
+        try {
+            storage.removeItem(key);
+        } catch (e) {
+            // Ignore unavailable browser storage.
+        }
+    }
+
+    function getStoredTheme() {
+        if (preferencesAllowed()) {
+            const persisted = readStorage(localStorage, STORAGE_KEY);
+            if (persisted) {
+                return persisted;
+            }
+        }
+
+        return readStorage(sessionStorage, SESSION_STORAGE_KEY);
     }
 
     function applyTheme(themeId) {
         document.body.classList.remove(...ALL_CLASSES);
         document.body.classList.add(themeId);
+        writeStorage(sessionStorage, SESSION_STORAGE_KEY, themeId);
         if (preferencesAllowed()) {
-            localStorage.setItem(STORAGE_KEY, themeId);
+            writeStorage(localStorage, STORAGE_KEY, themeId);
         }
     }
 
@@ -136,9 +171,9 @@
             window.addEventListener(window.LandolsiConsent.eventName, function (event) {
                 const activeTheme = ALL_CLASSES.find(c => document.body.classList.contains(c)) || currentTheme;
                 if (event.detail && event.detail.preferences) {
-                    localStorage.setItem(STORAGE_KEY, activeTheme);
+                    writeStorage(localStorage, STORAGE_KEY, activeTheme);
                 } else {
-                    localStorage.removeItem(STORAGE_KEY);
+                    removeStorage(localStorage, STORAGE_KEY);
                 }
             });
         }
