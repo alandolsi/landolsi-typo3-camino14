@@ -94,6 +94,7 @@ jobs:
             --exclude=".ddev/" \
             --exclude="var/" \
             --exclude="node_modules/" \
+            --exclude="public/fileadmin/" \
             --exclude="config/system/settings.php" \
             --exclude="config/system/additional.php" \
             ./ \
