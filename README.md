@@ -25,6 +25,20 @@ Dieses Repository zeigt, wie schnell sich mit TYPO3 14 LTS und dem Camino Theme 
 
 ---
 
+## Entwickler
+
+Dieses Projekt wurde von **Abdellatif Landolsi** als öffentliches TYPO3-/DevOps-Demoprojekt aufgebaut.
+
+| Profil | Link |
+|--------|------|
+| Website | https://landolsi.de |
+| GitHub | https://github.com/alandolsi |
+| Live-Demo | https://camino14.landolsi.de |
+
+Schwerpunkte des Projekts sind TYPO3, moderne Composer-Workflows, DDEV-Entwicklung, GitHub Actions, CloudPanel-Deployment und praxistaugliche Redaktionsfeatures.
+
+---
+
 ## Tech Stack
 
 | Bereich | Technologie |
