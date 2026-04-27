@@ -1,0 +1,40 @@
+<html
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    data-namespace-typo3-fluid="true"
+>
+
+<f:layout/>
+
+<f:section name="Header"/>
+
+<f:section name="Main">
+    <section class="lp-content-cta">
+        <div class="lp-content-cta__copy">
+            <f:if condition="{data.kicker}">
+                <p class="lp-content-cta__kicker">{data.kicker}</p>
+            </f:if>
+            <f:if condition="{data.header}">
+                <h2 class="lp-content-cta__title">{data.header}</h2>
+            </f:if>
+            <f:if condition="{data.text}">
+                <div class="lp-content-cta__text">
+                    <f:format.html>{data.text}</f:format.html>
+                </div>
+            </f:if>
+            <f:if condition="{data.button_link.url}">
+                <f:link.typolink parameter="{data.button_link}" class="lp-content-cta__button">
+                    <f:if condition="{data.button_label}">
+                        <f:then>{data.button_label}</f:then>
+                        <f:else>Mehr erfahren</f:else>
+                    </f:if>
+                </f:link.typolink>
+            </f:if>
+        </div>
+        <f:if condition="{data.image.0}">
+            <div class="lp-content-cta__media">
+                <f:image image="{data.image.0}" class="lp-content-cta__image" width="720c" height="405c" loading="lazy" />
+            </div>
+        </f:if>
+    </section>
+</f:section>
+</html>

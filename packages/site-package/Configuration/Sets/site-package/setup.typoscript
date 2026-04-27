@@ -1,7 +1,15 @@
 # Color Switcher – client-side Camino theme selection (localStorage-based)
+config {
+  compressCss = 1
+  compressJs = 1
+  concatenateCss = 0
+  concatenateJs = 0
+}
+
 page.includeCSS.cookieConsent = EXT:site_package/Resources/Public/cookie-consent/cookie-consent.css
 page.includeCSS.colorSwitcher = EXT:site_package/Resources/Public/color-switcher/color-switcher.css
 page.includeCSS.homeCarousel = EXT:site_package/Resources/Public/home-carousel/home-carousel.css
+page.includeCSS.contentBlocks = EXT:site_package/Resources/Public/content-blocks/content-blocks.css
 
 page.includeJSFooter.cookieConsent = EXT:site_package/Resources/Public/cookie-consent/cookie-consent.js
 page.includeJSFooter.colorSwitcher = EXT:site_package/Resources/Public/color-switcher/color-switcher.js

@@ -78,6 +78,71 @@ jobs:
               -v \
               "${PROD_USER}@${PROD_HOST}" "echo '✓ SSH OK'" 2>&1 | grep -E "debug1|Authentications|Permission|publickey|offer|accept|success|ident"
 
+      - name: Pre-Deployment-Backup erstellen
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_PORT: ${{ secrets.PROD_PORT }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+          PROD_DEPLOY_PATH: ${{ secrets.PROD_DEPLOY_PATH }}
+          PROD_PHP_BIN: ${{ secrets.PROD_PHP_BIN }}
+        run: |
+          PORT="${PROD_PORT:-22}"
+          PHP="${PROD_PHP_BIN:-php}"
+          ssh -i ~/.ssh/deploy_key \
+              -p "${PORT}" \
+              -o StrictHostKeyChecking=no \
+              "${PROD_USER}@${PROD_HOST}" \
+              "PROD_DEPLOY_PATH='${PROD_DEPLOY_PATH}' PHP_BIN='${PHP}' bash -s" <<'REMOTE'
+          set -euo pipefail
+
+          if [ ! -d "${PROD_DEPLOY_PATH}" ]; then
+            echo "Deploy-Pfad existiert noch nicht; Backup wird übersprungen."
+            exit 0
+          fi
+
+          cd "${PROD_DEPLOY_PATH}"
+          backup_dir="$(dirname "${PROD_DEPLOY_PATH}")/backups"
+          stamp="$(date -u '+%Y%m%dT%H%M%SZ')"
+          mkdir -p "${backup_dir}"
+
+          if [ -d public/fileadmin ]; then
+            tar -czf "${backup_dir}/fileadmin-${stamp}.tar.gz" -C public fileadmin
+            echo "✓ fileadmin-Backup erstellt"
+          else
+            echo "⚠ public/fileadmin fehlt; fileadmin-Backup übersprungen"
+          fi
+
+          if command -v mysqldump >/dev/null 2>&1 && [ -f config/system/settings.php ]; then
+            DB_BACKUP_FILE="${backup_dir}/database-${stamp}.sql.gz" "${PHP_BIN}" -r '
+              $settings = require "config/system/settings.php";
+              $db = $settings["DB"]["Connections"]["Default"] ?? null;
+              if (!$db) {
+                  fwrite(STDERR, "DB-Konfiguration fehlt.\n");
+                  exit(1);
+              }
+              $args = [
+                  "mysqldump",
+                  "--single-transaction",
+                  "--quick",
+                  "--skip-lock-tables",
+                  "-h", (string)($db["host"] ?? "localhost"),
+                  "-P", (string)($db["port"] ?? 3306),
+                  "-u", (string)$db["user"],
+                  "--password=" . (string)$db["password"],
+                  (string)$db["dbname"],
+              ];
+              $command = implode(" ", array_map("escapeshellarg", $args)) . " | gzip > " . escapeshellarg(getenv("DB_BACKUP_FILE"));
+              passthru($command, $exitCode);
+              exit($exitCode);
+            '
+            echo "✓ Datenbank-Backup erstellt"
+          else
+            echo "⚠ mysqldump oder settings.php fehlt; Datenbank-Backup übersprungen"
+          fi
+
+          find "${backup_dir}" -type f \( -name 'fileadmin-*.tar.gz' -o -name 'database-*.sql.gz' \) -mtime +14 -delete
+          REMOTE
+
       # Code + vendor/ per rsync übertragen, sensible/lokale Dateien ausgeschlossen
       - name: Code via rsync deployen
         env:
@@ -116,16 +181,59 @@ jobs:
               -p "${PORT}" \
               -o StrictHostKeyChecking=no \
               "${PROD_USER}@${PROD_HOST}" \
-              "cd '${PROD_DEPLOY_PATH}' \
-               && (${PHP} vendor/bin/typo3 cache:flush && echo '✓ TYPO3 Cache geleert') || echo '⚠ Cache-Flush übersprungen (settings.php fehlt?)' \
-               && (${PHP} vendor/bin/typo3 -V || true) \
-               && (${PHP} -r '
-                 \$c = @include \"${PROD_DEPLOY_PATH}/config/system/settings.php\";
-                 if (!\$c) { exit(0); }
-                 \$db = new mysqli(\$c[\"DB\"][\"Connections\"][\"Default\"][\"host\"],\$c[\"DB\"][\"Connections\"][\"Default\"][\"user\"],\$c[\"DB\"][\"Connections\"][\"Default\"][\"password\"],\$c[\"DB\"][\"Connections\"][\"Default\"][\"dbname\"]);
-                 \$db->query(\"UPDATE pages SET backend_layout=\\\"pagets__CaminoContentpage\\\",backend_layout_next_level=\\\"pagets__CaminoContentpage\\\" WHERE uid=1 AND (backend_layout=\"\" OR backend_layout IS NULL)\");
-                 echo \"✓ backend_layout geprüft (\" . \$db->affected_rows . \" Zeile(n) aktualisiert)\\n\";
-               ' && echo '✓ Post-Setup abgeschlossen') || echo '⚠ Post-Setup übersprungen'"
+              "PROD_DEPLOY_PATH='${PROD_DEPLOY_PATH}' PHP_BIN='${PHP}' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "${PROD_DEPLOY_PATH}"
+
+          if "${PHP_BIN}" vendor/bin/typo3 extension:setup --extension=site_package; then
+            echo "✓ site_package Schema geprüft"
+          else
+            echo "⚠ site_package Schema-Setup übersprungen"
+          fi
+
+          if "${PHP_BIN}" vendor/bin/typo3 cache:flush; then
+            echo "✓ TYPO3 Cache geleert"
+          else
+            echo "⚠ Cache-Flush übersprungen (settings.php fehlt?)"
+          fi
+
+          "${PHP_BIN}" vendor/bin/typo3 -V || true
+          "${PHP_BIN}" -r '
+            $settingsFile = "config/system/settings.php";
+            if (!is_file($settingsFile)) { exit(0); }
+            $c = require $settingsFile;
+            $db = new mysqli(
+                $c["DB"]["Connections"]["Default"]["host"],
+                $c["DB"]["Connections"]["Default"]["user"],
+                $c["DB"]["Connections"]["Default"]["password"],
+                $c["DB"]["Connections"]["Default"]["dbname"]
+            );
+            $db->query("UPDATE pages SET backend_layout=\"pagets__CaminoContentpage\",backend_layout_next_level=\"pagets__CaminoContentpage\" WHERE uid=1 AND (backend_layout=\"\" OR backend_layout IS NULL)");
+            echo "✓ backend_layout geprüft (" . $db->affected_rows . " Zeile(n) aktualisiert)\n";
+          ' && echo "✓ Post-Setup abgeschlossen"
+          REMOTE
+
+      - name: Production-Healthcheck
+        run: |
+          base_url="https://camino14.landolsi.de"
+          paths=("/" "/projekte" "/leistungen" "/kontakt" "/en/projects")
+
+          for path in "${paths[@]}"; do
+            body="$(mktemp)"
+            status="$(curl --silent --show-error --location --max-time 25 --write-out '%{http_code}' --output "${body}" "${base_url}${path}")"
+            if [ "${status}" != "200" ]; then
+              echo "Healthcheck fehlgeschlagen: ${base_url}${path} liefert HTTP ${status}"
+              cat "${body}"
+              exit 1
+            fi
+            if grep -Eiq 'Oops, an error occurred|Request: [0-9a-f]{8,}' "${body}"; then
+              echo "TYPO3-Fehlermarker gefunden: ${base_url}${path}"
+              cat "${body}"
+              exit 1
+            fi
+            rm -f "${body}"
+            echo "✓ ${base_url}${path}"
+          done
 
       - name: Deployment-Info
         run: |

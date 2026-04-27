@@ -16,6 +16,7 @@ nbproject
 # Public generated/uploaded assets (nicht committen)
 /public/*
 !/public/.htaccess
+!/public/robots.txt
 
 # TYPO3 Systemkonfiguration (produktionssensitiv!)
 /config/system/settings.php

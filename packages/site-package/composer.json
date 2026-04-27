@@ -3,6 +3,7 @@
     "description": "Landolsi TYPO3 Site Package with Color Switcher",
     "type": "typo3-cms-extension",
     "require": {
+        "friendsoftypo3/content-blocks": "^2.3",
         "typo3/cms-core": "^14.0",
         "typo3/theme-camino": "*"
     },
