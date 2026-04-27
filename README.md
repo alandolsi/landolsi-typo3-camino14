@@ -207,6 +207,26 @@ Details und Voraussetzungen: `docs/deployment.md`
 
 ---
 
+## Cookie / Consent Banner
+
+Das Projekt nutzt eine schlanke Consent-Lösung im eigenen Site-Package statt einer
+zusätzlichen TYPO3-Extension. Das Banner verwaltet Kategorien für:
+
+- technisch notwendig
+- Komfort-Einstellungen
+- Statistik
+- Marketing
+
+Aktuell ist kein Analytics- oder Marketing-Tracking aktiv. Die Komfort-Kategorie
+steuert die dauerhafte Speicherung des Camino-Farbschemas im Browser.
+
+Dateien:
+
+- `packages/site-package/Resources/Public/cookie-consent/cookie-consent.css`
+- `packages/site-package/Resources/Public/cookie-consent/cookie-consent.js`
+
+---
+
 ## Roadmap / Nächste Schritte
 
 - [ ] GitHub Environment `production` mit Required Reviewers anlegen

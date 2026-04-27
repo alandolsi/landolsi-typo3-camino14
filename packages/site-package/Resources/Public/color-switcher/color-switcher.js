@@ -1,7 +1,7 @@
 /**
  * Camino Color Switcher
  * Switches between the 4 official Camino CSS theme classes.
- * Persists choice in localStorage – no server round-trip required.
+ * Persists choice in localStorage when preference consent is enabled.
  */
 
 (function () {
@@ -19,10 +19,23 @@
     // All known theme classes (for clean removal before applying new one)
     const ALL_CLASSES = THEMES.map(t => t.id);
 
+    function preferencesAllowed() {
+        return Boolean(window.LandolsiConsent && window.LandolsiConsent.has('preferences'));
+    }
+
+    function getStoredTheme() {
+        if (!preferencesAllowed()) {
+            return null;
+        }
+        return localStorage.getItem(STORAGE_KEY);
+    }
+
     function applyTheme(themeId) {
         document.body.classList.remove(...ALL_CLASSES);
         document.body.classList.add(themeId);
-        localStorage.setItem(STORAGE_KEY, themeId);
+        if (preferencesAllowed()) {
+            localStorage.setItem(STORAGE_KEY, themeId);
+        }
     }
 
     function buildWidget(currentTheme) {
@@ -107,8 +120,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Determine active theme (localStorage wins, fall back to class already on body)
-        const stored = localStorage.getItem(STORAGE_KEY);
+        // Determine active theme (consented localStorage wins, fall back to class already on body)
+        const stored = getStoredTheme();
         const bodyClass = ALL_CLASSES.find(c => document.body.classList.contains(c));
         const currentTheme = stored || bodyClass || 'theme-caramel-cream';
 
@@ -118,5 +131,16 @@
         }
 
         document.body.appendChild(buildWidget(currentTheme));
+
+        if (window.LandolsiConsent && window.LandolsiConsent.eventName) {
+            window.addEventListener(window.LandolsiConsent.eventName, function (event) {
+                const activeTheme = ALL_CLASSES.find(c => document.body.classList.contains(c)) || currentTheme;
+                if (event.detail && event.detail.preferences) {
+                    localStorage.setItem(STORAGE_KEY, activeTheme);
+                } else {
+                    localStorage.removeItem(STORAGE_KEY);
+                }
+            });
+        }
     });
 })();
