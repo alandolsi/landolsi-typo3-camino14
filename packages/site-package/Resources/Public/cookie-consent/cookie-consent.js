@@ -27,7 +27,7 @@
                 },
                 statistics: {
                     title: 'Statistik',
-                    text: 'Reserviert fuer anonyme Reichweitenmessung. Aktuell ist kein Statistik-Tracking aktiv.',
+                    text: 'Erlaubt Reichweitenmessung mit OpenPanel, damit wir Seitenaufrufe und Nutzung der Demo-Website auswerten koennen.',
                 },
                 marketing: {
                     title: 'Marketing',
@@ -57,7 +57,7 @@
                 },
                 statistics: {
                     title: 'Statistics',
-                    text: 'Reserved for anonymous analytics. No statistics tracking is currently active.',
+                    text: 'Allows analytics with OpenPanel so we can evaluate page views and usage of the demo website.',
                 },
                 marketing: {
                     title: 'Marketing',

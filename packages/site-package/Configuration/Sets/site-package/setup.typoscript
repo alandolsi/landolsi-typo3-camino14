@@ -6,3 +6,4 @@ page.includeCSS.homeCarousel = EXT:site_package/Resources/Public/home-carousel/h
 page.includeJSFooter.cookieConsent = EXT:site_package/Resources/Public/cookie-consent/cookie-consent.js
 page.includeJSFooter.colorSwitcher = EXT:site_package/Resources/Public/color-switcher/color-switcher.js
 page.includeJSFooter.homeCarousel = EXT:site_package/Resources/Public/home-carousel/home-carousel.js
+page.includeJSFooter.openPanelTracking = EXT:site_package/Resources/Public/openpanel/openpanel-tracking.js
