@@ -17,6 +17,8 @@ nbproject
 /public/*
 !/public/.htaccess
 !/public/robots.txt
+!/public/typo3/
+!/public/typo3/index.php
 
 # TYPO3 Systemkonfiguration (produktionssensitiv!)
 /config/system/settings.php

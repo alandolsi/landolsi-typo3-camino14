@@ -216,7 +216,7 @@ jobs:
       - name: Production-Healthcheck
         run: |
           base_url="https://camino14.landolsi.de"
-          paths=("/" "/projekte" "/leistungen" "/kontakt" "/en/projects")
+          paths=("/" "/projekte" "/leistungen" "/kontakt" "/en/projects" "/typo3/")
 
           for path in "${paths[@]}"; do
             body="$(mktemp)"
