@@ -101,6 +101,7 @@ jobs:
           test -f packages/site-package/Resources/Public/openpanel/openpanel-tracking.js
           test -f packages/site-package/Resources/Public/content-blocks/content-blocks.css
           test -f public/robots.txt
+          test -f public/typo3/index.php
           vendor/bin/typo3 content-blocks:lint
 
       - name: Prüfen ob Autoload korrekt generiert wurde
