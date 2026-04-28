@@ -227,7 +227,7 @@ Die CI läuft bei Pushes und Pull Requests auf `main` und `develop`.
 
 | Job | Prüfung |
 |-----|---------|
-| `Validate Composer` | `composer validate --strict`, Secret-Regressionscheck |
+| `Validate Composer` | `composer validate --strict`, Secret- und Umlaut-Regressionschecks |
 | `Build & Smoke Test` | Composer Install, TYPO3-Version, JS-Syntax, Content-Blocks-Lint, Asset-Smoke-Checks |
 
 Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
@@ -266,7 +266,7 @@ cp .ddev/.env.pullpush.example .ddev/.env.pullpush
 ddev pull production
 ```
 
-`ddev push production` ist möglich, aber absichtlich mit einer starken Schutzabfrage abgesichert, weil damit produktive Daten überschrieben werden können.
+`ddev push production` ist möglich, aber absichtlich mit einer starken Schutzabfrage abgesichert, weil damit produktive Daten überschrieben werden können. Vor dem DB-Push prüft das Projekt sichtbare Content-Felder zusätzlich auf ASCII-Umlaut-Schreibweisen und bricht bei Treffern ab.
 
 ---
 

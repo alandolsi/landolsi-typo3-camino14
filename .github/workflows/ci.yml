@@ -53,6 +53,9 @@ jobs:
             exit 1
           fi
 
+      - name: Deutsche Umlaut-Schreibweisen prüfen
+        run: scripts/check-visible-german-umlauts.sh --source
+
   # ─────────────────────────────────────────────
   # Job 2: Projekt bauen und grundlegend prüfen
   # ─────────────────────────────────────────────
