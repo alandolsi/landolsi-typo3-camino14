@@ -17,6 +17,7 @@ nbproject
 /public/*
 !/public/.htaccess
 !/public/robots.txt
+!/public/favicon.ico
 !/public/typo3/
 !/public/typo3/index.php
 

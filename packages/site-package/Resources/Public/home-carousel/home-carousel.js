@@ -5,11 +5,11 @@
         de: {
             label: 'Highlights von Landolsi Webdesign',
             prev: 'Vorherige Folie',
-            next: 'Naechste Folie',
+            next: 'Nächste Folie',
             slides: [
                 {
                     eyebrow: 'TYPO3 14 + Camino',
-                    title: 'Saubere Projekte, die Redakteuren wirklich Spass machen',
+                    title: 'Saubere Projekte, die Redakteuren wirklich Spaß machen',
                     text: 'Wir verbinden modernes Webdesign mit klaren TYPO3-Workflows, damit Inhalte schnell gepflegt und Deployments entspannt ausgeliefert werden.',
                     ctaLabel: 'Leistungen ansehen',
                     ctaHref: '/leistungen',

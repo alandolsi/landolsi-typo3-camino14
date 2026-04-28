@@ -86,12 +86,14 @@
         panel.className = 'color-switcher__panel';
         panel.setAttribute('role', 'listbox');
         panel.setAttribute('aria-label', 'Farbschema');
+        panel.setAttribute('aria-activedescendant', currentTheme);
 
         THEMES.forEach(function (theme) {
             const btn = document.createElement('button');
             btn.className = 'color-switcher__option';
+            btn.id = theme.id;
             btn.setAttribute('role', 'option');
-            btn.setAttribute('aria-pressed', theme.id === currentTheme ? 'true' : 'false');
+            btn.setAttribute('aria-selected', theme.id === currentTheme ? 'true' : 'false');
             btn.setAttribute('data-theme', theme.id);
             btn.title = theme.label;
 
@@ -107,10 +109,10 @@
 
             btn.addEventListener('click', function () {
                 applyTheme(theme.id);
-                // Update aria-pressed on all buttons
                 panel.querySelectorAll('.color-switcher__option').forEach(function (b) {
-                    b.setAttribute('aria-pressed', b.dataset.theme === theme.id ? 'true' : 'false');
+                    b.setAttribute('aria-selected', b.dataset.theme === theme.id ? 'true' : 'false');
                 });
+                panel.setAttribute('aria-activedescendant', theme.id);
                 // Close panel after short delay so user sees selection
                 setTimeout(function () {
                     widget.setAttribute('data-open', 'false');

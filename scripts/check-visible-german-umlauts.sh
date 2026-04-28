@@ -3,8 +3,8 @@ set -euo pipefail
 
 MODE="${1:---source}"
 
-SOURCE_PATTERN='(^|[^[:alpha:]])(fuer|Fuer|koennen|Koennen|Fuehrung|fuehrung|naechstes|Naechstes|muessen|Muessen|frueh|Frueh|spaeter|Spaeter|zusammenhaeng|Zusammenhaeng|Produktionsuebergabe|qualitaet|Qualitaet|verlaesslich|Verlaesslich|schoen|Schoen|gruen|Gruen|weiss|Weiss|waehlen|Waehlen|wuenschen|Wuenschen)([^[:alpha:]]|$)'
-DB_PATTERN='(^|[^[:alpha:]])(fuer|Fuer|ueber|Ueber|koennen|Koennen|Fuehrung|fuehrung|naechstes|Naechstes|muessen|Muessen|frueh|Frueh|spaeter|Spaeter|zusammenhaeng|Zusammenhaeng|Produktionsuebergabe|qualitaet|Qualitaet|verlaesslich|Verlaesslich|schoen|Schoen|gruen|Gruen|weiss|Weiss|waehlen|Waehlen|wuenschen|Wuenschen)([^[:alpha:]]|$)'
+SOURCE_PATTERN='(^|[^[:alpha:]])(fuer|Fuer|koennen|Koennen|Fuehrung|fuehrung|naechste|Naechste|naechstes|Naechstes|muessen|Muessen|frueh|Frueh|spaeter|Spaeter|zusammenhaeng|Zusammenhaeng|Produktionsuebergabe|qualitaet|Qualitaet|verlaesslich|Verlaesslich|schoen|Schoen|gruen|Gruen|weiss|Weiss|waehlen|Waehlen|wuenschen|Wuenschen|Spass|spass)([^[:alpha:]]|$)'
+DB_PATTERN='(^|[^[:alpha:]])(fuer|Fuer|ueber|Ueber|koennen|Koennen|Fuehrung|fuehrung|naechste|Naechste|naechstes|Naechstes|muessen|Muessen|frueh|Frueh|spaeter|Spaeter|zusammenhaeng|Zusammenhaeng|Produktionsuebergabe|qualitaet|Qualitaet|verlaesslich|Verlaesslich|schoen|Schoen|gruen|Gruen|weiss|Weiss|waehlen|Waehlen|wuenschen|Wuenschen|Spass|spass)([^[:alpha:]]|$)'
 
 usage() {
   cat <<'EOF'

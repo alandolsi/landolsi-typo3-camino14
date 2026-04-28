@@ -1,4 +1,8 @@
-base: '/'
+base: 'https://camino14.landolsi.de/'
+baseVariants:
+  -
+    base: 'https://camino14.ddev.site/'
+    condition: 'getenv("IS_DDEV_PROJECT") == "true"'
 dependencies:
   - typo3/theme-camino
   - landolsi/site-package
