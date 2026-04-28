@@ -117,6 +117,9 @@ db_push_command:
     TS=$(date +%Y%m%d_%H%M%S)
     TMP_FILE="/tmp/ddev_prod_push_${TS}.sql.gz"
 
+    echo "▶ Prüfe lokale sichtbare Content-Texte auf ASCII-Umlaut-Schreibweisen..."
+    "${DDEV_APPROOT}/scripts/check-visible-german-umlauts.sh" --db
+
     echo "▶ Exportiere lokale DB..."
     ddev export-db --file="${TMP_FILE}" --gzip
 
